@@ -7,6 +7,7 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Properties;
 
+import com.paulhammant.ngwebdriver.NgWebDriver;
 import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
@@ -21,6 +22,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 public class Base {
 
     public WebDriver driver;
+
     public String url;
 
     public WebDriver initializeDriver() throws IOException {

@@ -1,44 +1,32 @@
 package stepdefinations;
 
-import static org.openqa.selenium.support.locators.RelativeLocator.with;
-
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.time.Duration;
-
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.tools.picocli.CommandLine;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
-import org.testng.Assert;
-
 import com.paulhammant.ngwebdriver.NgWebDriver;
-
-import factory.DriverFactory;
-import factory.FormControlKaryakarta;
-import factory.Login;
-import factory.WaitUtils;
+import factory.*;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.openqa.selenium.*;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
 import resources.Base;
 import resources.SangathanPageObjects;
-import factory.ExceptionHandler;
 import resources.WardPageObjects;
 import utils.KaryakaryaDataEntryFormControl;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
+
+import static org.openqa.selenium.support.locators.RelativeLocator.with;
 
 public class WardKaryakarta {
     // public WebDriver driver;
@@ -47,6 +35,8 @@ public class WardKaryakarta {
     NgWebDriver ngDriver;
     WebDriver driver;
     WaitUtils load_wait;
+
+    WardPageObjects wardPageObjects;
     // Ward Karyakarta Data Filter Data
     public String state;
     public String ULBType;
@@ -186,6 +176,8 @@ public class WardKaryakarta {
     public String copiedEmail;
     public Base contextSteps;
 
+    public SangathanPageObjects sangathanPageObjects;
+
     public static Logger log = LogManager.getLogger(WardKaryakarta.class.getName());
 
     @Given("^user logged in into the saral application$")
@@ -196,7 +188,6 @@ public class WardKaryakarta {
         driver = DriverFactory.getDriver();
         // creating object for loading web page
         load_wait = new WaitUtils();
-        // driver.get("https://zila-staging.ccdms.in/");
         System.out.println("URL for ward");
         Map<String, String> map = login_table_ward.asMap(String.class, String.class);
 
@@ -232,7 +223,7 @@ public class WardKaryakarta {
 
     @And("^user click on add entry button for ward karyakarta$")
     public void user_click_on_add_entry_button_for_ward_karyakarta() throws InterruptedException {
-        wait = new WebDriverWait(driver, Duration.ofSeconds(110));
+        wait = new WebDriverWait(driver, Duration.ofSeconds(60));
         js = (JavascriptExecutor) driver;
         ngDriver = new NgWebDriver((JavascriptExecutor) driver);
 
@@ -272,67 +263,169 @@ public class WardKaryakarta {
 
 
         //Object for getting ward filters location
-        WardPageObjects wardPageObjects = new WardPageObjects(driver);
+        wardPageObjects = new WardPageObjects(driver);
         List<WebElement> ward_karyakarta_filter = wardPageObjects.getWardFilterEles();
         // state
-        String wardFilterStateText = driver.findElement(By.xpath("//div[@class='ng-value ng-star-inserted']")).getText();
-        System.out.println("wardFilterStateText:-> " + wardFilterStateText);
-        Assert.assertEquals(wardFilterStateText, "Uttar Pradesh");
+        String selectedStateText = wardPageObjects.getSelectedDropdownEle().get(0).getText();
+        System.out.println("selectedStateText:-> " + selectedStateText);
+        Assert.assertEquals(selectedStateText, "Uttar Pradesh");
+
         // select state
         WebElement selectState = wardPageObjects.getSelectStateEle(state);
+        wait.until(ExpectedConditions.visibilityOf(selectState));
         ExceptionHandler.clickElementWithRetry(selectState);
-        //wait.until(ExpectedConditions.visibilityOf(selectState)).click();
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        Thread.sleep(2000);
-        // ULB Type
-        ExceptionHandler.clickElementWithRetry(ward_karyakarta_filter.get(1));
-        ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        Thread.sleep(2000);
-        WebElement selectLocalBodyType = wardPageObjects.getULBTypeEle(ULBType);
-        wait.until(ExpectedConditions.visibilityOf(selectLocalBodyType)).click();
-        ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        // Administrative District
-        ExceptionHandler.clickElementWithRetry(ward_karyakarta_filter.get(2));
-        ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        Thread.sleep(2000);
-        WebElement selectAdministrativeDistrict = wardPageObjects.getAdministrativeDistrictEle(administrativeDistrict);
-        wait.until(ExpectedConditions.visibilityOf(selectAdministrativeDistrict)).click();
-        ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        Thread.sleep(2000);
-        // Local Body
-        ExceptionHandler.clickElementWithRetry(ward_karyakarta_filter.get(3));
 
-        ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        Thread.sleep(2000);
-        WebElement selectLocalBody = wardPageObjects.getLocalBodyEle(localBody);
-        wait.until(ExpectedConditions.visibilityOf(selectLocalBody)).click();
-        ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        Thread.sleep(2000);
-        // ward
-        ExceptionHandler.clickElementWithRetry(ward_karyakarta_filter.get(4));
-        ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        Thread.sleep(2000);
-        WebElement selectWard = wardPageObjects.getWardEle(Ward);
-        System.out.println("WardDrop: " + selectWard);
-        js.executeScript("arguments[0].click();", selectWard);
-        ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        Thread.sleep(2000);
-        // Organisation Unit
-        ExceptionHandler.clickElementWithRetry(ward_karyakarta_filter.get(5));
-        ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        Thread.sleep(2000);
-        WebElement selectOrganisationUnit = wardPageObjects.getOrganisationUnitEle(organisationUnit);
-        wait.until(ExpectedConditions.visibilityOf(selectOrganisationUnit)).click();
-        ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        Thread.sleep(2000);
-        // Organisation Sub Unit
-        ExceptionHandler.clickElementWithRetry(ward_karyakarta_filter.get(6));
-        ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        Thread.sleep(2000);
-        WebElement selectOrganisationSubUnit = wardPageObjects.getOrganisationSubUnitEle(organisationSubUnit);
-        js.executeScript("arguments[0].click();", selectOrganisationSubUnit);
-        ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        Thread.sleep(2000);
+
+        if (selectedStateText.equals(state)) {
+            System.out.println("state is selected: " + state);
+            // if state is selected then select ULB Type
+            wait.until(ExpectedConditions.visibilityOf(ward_karyakarta_filter.get(1)));
+            ExceptionHandler.clickElementWithRetry(ward_karyakarta_filter.get(1));
+            ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
+            // select ULB
+            WebElement selectLocalBodyType = wardPageObjects.getULBTypeEle(ULBType);
+            wait.until(ExpectedConditions.visibilityOf(selectLocalBodyType));
+
+            // select ULB Type Ele
+            ExceptionHandler.clickElementWithRetry(selectLocalBodyType);
+            load_wait.waitForPageLoad();
+            // js.executeScript("arguments[0].click();", selectLocalBodyType);
+            ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
+            wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[contains(@class, 'ng-value ng-star-inserted') and contains(text(), '" + ULBType + "')]")));
+            //get selected ULB Ele
+            String selectedULBText = wardPageObjects.getSelectedDropdownEle().get(1).getText();
+            System.out.println("selectedULBText: " + selectedULBText);
+            //check ULB is selected or not
+            if (selectedULBText.equals(ULBType)) {
+                System.out.println("ULB Type is selected");
+                //If ULB Type is selected then select Administrative District
+                wait.until(ExpectedConditions.visibilityOf(ward_karyakarta_filter.get(2)));
+                ExceptionHandler.clickElementWithRetry(ward_karyakarta_filter.get(2));
+                ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
+                // Select Administrative District
+                WebElement selectAdministrativeDistrict = wardPageObjects.getAdministrativeDistrictEle(administrativeDistrict);
+                //wait.until(ExpectedConditions.visibilityOf(selectAdministrativeDistrict));
+                //js.executeScript("arguments[0].click();", selectAdministrativeDistrict);
+                ExceptionHandler.clickElementWithRetry(selectAdministrativeDistrict);
+                load_wait.waitForPageLoad();
+                ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
+                //Thread.sleep(2000);
+                //get selected Administrative District Ele
+                wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[contains(@class, 'ng-value ng-star-inserted') and contains(text(), '" + administrativeDistrict + "')]")));
+                String selectedADText = ExceptionHandler.getTextOfElementWithRetry(wardPageObjects.getSelectedDropdownEle().get(2));
+                System.out.println("selectedADText: " + selectedADText);
+
+                if (selectedADText.equals(administrativeDistrict)) {
+                    System.out.println("AD is selected");
+
+                    //If AD is selected then select Local Body
+                    wait.until(ExpectedConditions.visibilityOf(ward_karyakarta_filter.get(3)));
+                    ExceptionHandler.clickElementWithRetry(ward_karyakarta_filter.get(3));
+                    ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
+                    // select local body
+                    WebElement selectLocalBody = wardPageObjects.getLocalBodyEle(localBody);
+                    wait.until(ExpectedConditions.visibilityOf(selectLocalBody));
+                    //js.executeScript("arguments[0].click();", selectLocalBody);
+                    ExceptionHandler.clickElementWithRetry(selectLocalBody);
+                    ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
+                    Thread.sleep(1000);
+                    load_wait.waitForPageLoad();
+                    wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[contains(@class, 'ng-value ng-star-inserted') and contains(text(), '" + localBody + "')]")));
+                    String selectedLocalBodyText = ExceptionHandler.getTextOfElementWithRetry(wardPageObjects.getSelectedDropdownEle().get(3));
+                    System.out.println("selectedLocalBodyText: " + selectedLocalBodyText);
+
+                    if (selectedLocalBodyText.equals(localBody)) {
+                        System.out.println("local body is selected");
+
+                        //if Local Body is selected the select Ward
+                        wait.until(ExpectedConditions.visibilityOf(ward_karyakarta_filter.get(4)));
+                        ExceptionHandler.clickElementWithRetry(ward_karyakarta_filter.get(4));
+                        ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
+                        // select ward
+                        WebElement selectWard = wardPageObjects.getWardEle(Ward);
+                        System.out.println("WardDrop: " + selectWard);
+                        wait.until(ExpectedConditions.visibilityOf(selectWard));
+                        // js.executeScript("arguments[0].click();", selectWard);
+                        ExceptionHandler.clickElementWithRetry(selectWard);
+                        ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
+                        Thread.sleep(1000);
+                        load_wait.waitForPageLoad();
+                        wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[contains(@class, 'ng-value ng-star-inserted') and contains(text(), '" + Ward + "')]")));
+                        String selectedWardText = ExceptionHandler.getTextOfElementWithRetry(wardPageObjects.getSelectedDropdownEle().get(4));
+                        if (selectedWardText.equals(Ward)) {
+                            System.out.println("ward is selected");
+
+                            //if ward is selected then select org unit
+                            wait.until(ExpectedConditions.visibilityOf(ward_karyakarta_filter.get(5)));
+                            ExceptionHandler.clickElementWithRetry(ward_karyakarta_filter.get(5));
+                            ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
+                            // select organisation unit
+                            WebElement selectOrganisationUnit = wardPageObjects.getOrganisationUnitEle(organisationUnit);
+                            wait.until(ExpectedConditions.visibilityOf(selectOrganisationUnit));
+                            // js.executeScript("arguments[0].click();", selectOrganisationUnit);
+                            ExceptionHandler.clickElementWithRetry(selectOrganisationUnit);
+                            ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
+                            Thread.sleep(1000);
+                            load_wait.waitForPageLoad();
+                            wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[contains(@class, 'ng-value ng-star-inserted') and contains(text(), '" + organisationUnit + "')]")));
+                            String selectedOrganisationUnitText = ExceptionHandler.getTextOfElementWithRetry(wardPageObjects.getSelectedDropdownEle().get(5));
+                            if (selectedOrganisationUnitText.equals(organisationUnit)) {
+                                System.out.println("Organisation unit is selected");
+                                //if org unit is selected then select organisation Sub Unit
+
+                                wait.until(ExpectedConditions.visibilityOf(ward_karyakarta_filter.get(6)));
+                                ExceptionHandler.clickElementWithRetry(ward_karyakarta_filter.get(6));
+                                ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
+                                // select organisation sub unit
+                                WebElement selectOrganisationSubUnit = wardPageObjects.getOrganisationSubUnitEle(organisationSubUnit);
+                                wait.until(ExpectedConditions.visibilityOf(selectOrganisationSubUnit));
+                                //js.executeScript("arguments[0].click();", selectOrganisationSubUnit);
+                                ExceptionHandler.clickElementWithRetry(selectOrganisationSubUnit);
+                                ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
+                                Thread.sleep(1000);
+                                load_wait.waitForPageLoad();
+                                wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[contains(@class, 'ng-value ng-star-inserted') and contains(text(), '" + organisationSubUnit + "')]")));
+                                String selectedOrganisationSubUnitText = ExceptionHandler.getTextOfElementWithRetry(wardPageObjects.getSelectedDropdownEle().get(6));
+                                if (selectedOrganisationSubUnitText.equals(organisationSubUnit)) {
+                                    System.out.println("org sub unit is selected");
+                                } else {
+
+                                    System.out.println("org sub unit not selected");
+
+                                }
+
+                            } else {
+                                System.out.println("Organisation unit is not selected");
+
+                            }
+
+                        } else {
+
+                            System.out.println("ward is not selected");
+
+                        }
+
+                    } else {
+                        System.out.println("local body is not selected");
+                    }
+
+
+                } else {
+                    System.out.println("AD is not selected");
+
+                }
+
+
+            } else {
+                System.out.println("ULb Type is not selected");
+            }
+
+
+        } else {
+            System.out.println("state is not selected.");
+        }
+
 
     }
 
@@ -393,32 +486,32 @@ public class WardKaryakarta {
 
         // FormControlKaryakarta FormControlKaryakarta = new FormControlKaryakarta();
         // Name
-        FormControlKaryakarta.enterKaryakartaName(name);
+        FormControlKaryakarta.enterName(name);
 
         // Father and Husband Name
-        FormControlKaryakarta.enterKaryakartaRelationName(fatherName);
+        FormControlKaryakarta.enterRelationName(fatherName);
 
         // Designation
-        FormControlKaryakarta.clickOnkaryakartaDesignation();
+        FormControlKaryakarta.clickOnDesignation();
 
         // Select Designation
-        FormControlKaryakarta.selectKaryakartaDesignation(designation);
+        FormControlKaryakarta.selectDesignation(designation);
 
         // hasSmartPhone
-        FormControlKaryakarta.clickOnKaryakartaHasSmartPhone();
+        FormControlKaryakarta.clickOnHasSmartPhone();
 
         // select hasSmartPhone
-        FormControlKaryakarta.selectKaryakartaDesignation(hasSmartPhone);
+        FormControlKaryakarta.selectDesignation(hasSmartPhone);
 
         // Primary Member
-        FormControlKaryakarta.enterKaryakartaPrimaryMemberId(primaryMemberId);
+        FormControlKaryakarta.enterPrimaryMemberId(primaryMemberId);
         // Age
-        FormControlKaryakarta.enterKaryakartaAge(age);
+        FormControlKaryakarta.enterAge(age);
 
         // Validation for phone no.
         apply_validation_in_phone_number();
         // phone number
-        FormControlKaryakarta.enterKaryakartaPhoneNumber(phoneNumber);
+        FormControlKaryakarta.enterPhoneNumber(phoneNumber);
 
     }
 
@@ -471,33 +564,39 @@ public class WardKaryakarta {
         partyMandal = map.get("Party Mandal");
         bloodGroup = map.get("Blood Group");
 
-        // FormControlKaryakarta FormControlKaryakarta = new FormControlKaryakarta();
+        // Object for SANGATHAN Page Object Class
+        sangathanPageObjects = new SangathanPageObjects(driver);
+
+        //Objects for ward page objects
+        wardPageObjects = new WardPageObjects(driver);
+
         // Name
-        FormControlKaryakarta.enterKaryakartaName(name);
+        FormControlKaryakarta.enterName(name);
 
         // Father and Husband Name
-        FormControlKaryakarta.enterKaryakartaRelationName(fatherName);
+        FormControlKaryakarta.enterRelationName(fatherName);
 
         // Designation
-        FormControlKaryakarta.clickOnkaryakartaDesignation();
+        FormControlKaryakarta.clickOnDesignation();
 
         // Select Designation
-        FormControlKaryakarta.selectKaryakartaDesignation(designation);
+        FormControlKaryakarta.selectDesignation(designation);
 
         // hasSmartPhone
-        FormControlKaryakarta.clickOnKaryakartaHasSmartPhone();
+        FormControlKaryakarta.clickOnHasSmartPhone();
 
         // select hasSmartPhone
-        FormControlKaryakarta.selectKaryakartaDesignation(hasSmartPhone);
+        FormControlKaryakarta.selectHasSmartPhone(hasSmartPhone);
 
         // Primary Member
-        FormControlKaryakarta.enterKaryakartaPrimaryMemberId(primaryMemberId);
+        FormControlKaryakarta.enterPrimaryMemberId(primaryMemberId);
         // Age
-        FormControlKaryakarta.enterKaryakartaAge(age);
+        FormControlKaryakarta.enterAge(age);
         int ageInt = Integer.parseInt(age);
         // Dob
         String calculatedDOB = dob_calculation_based_on_age_input(ageInt);
-        WebElement dobEle = driver.findElement(By.xpath("//input[@data-placeholder='Dob']"));
+        WebElement dobEle = sangathanPageObjects.getDOBEle();
+        js.executeScript("arguments[0].scrollIntoView(true);", dobEle);
         String copiedDobAfterEnteredAge = dobEle.getAttribute("value");
         Assert.assertEquals(calculatedDOB, copiedDobAfterEnteredAge);
         dobEle.clear();
@@ -512,273 +611,183 @@ public class WardKaryakarta {
         Assert.assertEquals(day_and_month_updated_dob, copiedDob);
 
         // select gender
-        String selectGender;
-        if (gender.equals("Male") || gender.equals("Female")) {
-            selectGender = gender.toLowerCase();
-        } else {
-            // make Other to others
-            selectGender = gender.toLowerCase() + "s";
-        }
-        WebElement genderEle = driver.findElement(By.xpath("//input[@value='" + selectGender + "']"));
-        WebElement genderLevelTxt = driver.findElement(By.xpath("//label[contains(text(),'Gender')]"));
-        js.executeScript("arguments[0].scrollIntoView(true);", genderLevelTxt);
-        Thread.sleep(1000);
-        js.executeScript("arguments[0].click();", genderEle);
+        FormControlKaryakarta.selectGender(gender);
         // Blood Group
-        WebElement BloodGroupEle = driver.findElement(By.xpath("//input[@data-placeholder='Blood Group']"));
-        BloodGroupEle.sendKeys(bloodGroup);
+        FormControlKaryakarta.enterBloodGroup(bloodGroup);
 
         // Validation for phone no.
         apply_validation_in_phone_number();
         // phone number
-        FormControlKaryakarta.enterKaryakartaPhoneNumber(phoneNumber);
+        FormControlKaryakarta.enterPhoneNumber(phoneNumber);
         // STD Code
-        WebElement stdCodeEle = driver.findElement(By.xpath("//input[@placeholder='STD Code']"));
-        stdCodeEle.sendKeys(stdCode);
+        FormControlKaryakarta.enterSTDCode(stdCode);
         // WhatsApp
-        WebElement whatsAppEle = driver.findElement(By.xpath("//input[@placeholder='WhatsApp Number']"));
         // Validation for WhatsApp No.
         apply_validation_in_whatsapp_number();
-        whatsAppEle.sendKeys(whatsApp);
+        //whatsAppEle.sendKeys(whatsApp);
+        FormControlKaryakarta.enterWhatsAppNumber(whatsApp);
         // Landline Number
-        WebElement stdLandlineEle = driver.findElement(By.xpath("//input[@placeholder='Landline Number']"));
-        stdLandlineEle.sendKeys(landlineNumber);
-        // Category
-        List<WebElement> selectCategoryEle = driver.findElements(By.xpath("//div[contains(text(),'Select Category')]"));
+        FormControlKaryakarta.enterLandlineNumber(landlineNumber);
 
+        // Category and Caste fields handle with validation
         // Caste
-        List<WebElement> CasteEle = driver.findElements(By.xpath("//div[contains(text(),'Caste')]"));
+        WebElement CasteEle = sangathanPageObjects.getSelectCasteEle();
         // Validation in category and caste
         apply_validation_in_category_and_caste();
 
         // click on select Category
-        selectCategoryEle.get(0).click();
-        // categoryValue = addDatadriven.get(12);
-        WebElement categoryValueEle = driver.findElement(By.xpath("//div//span[contains(text(),'" + category + "')]"));
-        js.executeScript("arguments[0].click();", categoryValueEle);
+        FormControlKaryakarta.clickOnCategory();
+        WebElement categoryValueEle = sangathanPageObjects.getCategoryValueEle(category);
+        ExceptionHandler.clickElementWithRetry(categoryValueEle);
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        // Thread.sleep(2000);
-
-        List<WebElement> casteOverlayEle = driver.findElements(By.xpath("//div[@class='overlay ng-star-inserted']"));
-        while (casteOverlayEle.size() > 0) {
-            System.out.println("caste Overlay 1 ........");
-            casteOverlayEle = driver.findElements(By.xpath("//div[@class='overlay ng-star-inserted']"));
-            Thread.sleep(1000);
-        }
-        System.out.println("--------------- overlay gone----------------");
         Thread.sleep(2000);
 
         // click on Caste
-        WebElement CasteEleAfterwait = wait.until(ExpectedConditions.elementToBeClickable(CasteEle.get(0)));
-        CasteEleAfterwait.click();
+        ExceptionHandler.clickElementWithRetry(CasteEle);
 
-        // casteValue = addDatadriven.get(13);
-        WebElement CasteValueEle = driver.findElement(By.xpath("//div//span[contains(text(),'" + caste + "')]"));
-        js.executeScript("arguments[0].click();", CasteValueEle);
+        //select caste value
+        WebElement CasteValueEle = sangathanPageObjects.getCasteValueEle(caste);
+        ExceptionHandler.clickElementWithRetry(CasteValueEle);
+
 
         // Email
-        WebElement emailEle = driver.findElement(By.xpath("//input[@placeholder='Email']"));
+
         // validation in email
         apply_validation_in_email();
-        emailEle.sendKeys(email);
+        FormControlKaryakarta.enterEmail(email);
 
         // Full Address
-        WebElement fullAddressEle = driver.findElement(By.xpath("//input[@placeholder='Full Address']"));
-        fullAddressEle.sendKeys(fullAddress);
+        FormControlKaryakarta.enterFullAddress(fullAddress);
 
         // Village
-        WebElement villageEle = driver.findElement(By.xpath("//input[@placeholder='Village/Ward']"));
-        villageEle.sendKeys(village);
+        FormControlKaryakarta.enterVillage(village);
 
         // Taluka/Tehsil
-        WebElement Taluka_Tehsil_Ele = driver.findElement(By.xpath("//input[contains(@placeholder, 'Taluka')]"));
-        Taluka_Tehsil_Ele.sendKeys(taluka);
+        FormControlKaryakarta.enterTaluka(taluka);
 
         // District
-        WebElement selectDistrictEle = driver.findElement(By.xpath("//div[contains(text(),'Select District')]"));
-        selectDistrictEle.click();
+        FormControlKaryakarta.clickOnDistrict();
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
         Thread.sleep(2000);
         // Select District
-        WebElement DistrictNameEle = driver.findElement(By.xpath("//div//span[contains(text(),'" + district + "')]"));
-        js.executeScript("arguments[0].click();", DistrictNameEle);
-        // Pincode
-        WebElement pincodeEle = driver.findElement(By.xpath("//input[@placeholder='Pin Code']"));
-        pincodeEle.sendKeys(pinCode);
+        FormControlKaryakarta.selectDistrict(district);
+
+        // PinCode
+        FormControlKaryakarta.enterPinCode(pinCode);
 
         // Education
-        WebElement selectEducationEle = driver.findElement(By.xpath("//div[contains(text(),'Select Education')]"));
-        selectEducationEle.click();
+        FormControlKaryakarta.clickOnEducation();
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        Thread.sleep(2000);
+        //Thread.sleep(2000);
         // Select Education
-        WebElement EducationValueEle = driver
-                .findElement(By.xpath("//div//span[contains(text(),'" + education + "')]"));
-        js.executeScript("arguments[0].click();", EducationValueEle);
+        FormControlKaryakarta.selectEducation(education);
         // click on Select Profession
-        WebElement selectProfessionEle = driver.findElement(By.xpath("//div[contains(text(),'Select Profession')]"));
-        selectProfessionEle.click();
+        FormControlKaryakarta.clickOnProfession();
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        Thread.sleep(2000);
+        //Thread.sleep(2000);
         // Select Profession
-        WebElement ProfessionValueEle = driver
-                .findElement(By.xpath("//div//span[contains(text(),'" + profession + "')]"));
-        js.executeScript("arguments[0].click();", ProfessionValueEle);
+        FormControlKaryakarta.selectProfession(profession);
 
         // click on Bike
-        WebElement BikeEle = driver.findElement(By.xpath("//div[contains(text(),'Bike')]"));
-        BikeEle.click();
+        FormControlKaryakarta.clickOnHasBike();
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
         Thread.sleep(1000);
-        WebElement bikeValueEle = null;
+
         // Select yes or no for bike
-        if (bike.equals("Yes")) {
-            bikeValueEle = driver.findElements(By.className("ng-option-label")).get(0);
-        } else {
-            bikeValueEle = driver.findElements(By.className("ng-option-label")).get(1);
-        }
-        js.executeScript("arguments[0].click();", bikeValueEle);
+        FormControlKaryakarta.selectHasBike(bike);
 
         // click on Car
-        WebElement CarEle = driver.findElement(By.xpath("//div[contains(text(),'Car')]"));
-        CarEle.click();
+        FormControlKaryakarta.clickOnHasCar();
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
         Thread.sleep(1000);
         // Select yes or no for car
-        WebElement carValueEle = null;
-        if (car.equals("Yes")) {
-            carValueEle = driver.findElements(By.className("ng-option-label")).get(0);
-        } else {
-            carValueEle = driver.findElements(By.className("ng-option-label")).get(1);
-        }
-        js.executeScript("arguments[0].click();", carValueEle);
+        FormControlKaryakarta.selectHasCar(car);
 
         // click on Vidhan Sabha where He/She Votes
-        WebElement VidhanSabhawhereHe_SheVotesEle = driver
-                .findElement(By.xpath("//div[contains(text(),'Vidhan Sabha where He/She Votes')]"));
-        VidhanSabhawhereHe_SheVotesEle.click();
+        FormControlKaryakarta.clickOnVidhanSabhaHeSheVotes();
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        Thread.sleep(2000);
+        // Thread.sleep(2000);
         // Select Vidhan Sabha
-        WebElement VidhanSabhawhereHe_SheVotesValueEle = driver
-                .findElement(By.xpath("//div//span[contains(text(),'" + vidhanSabhaWhereHeSheVotes + "')]"));
-        js.executeScript("arguments[0].click();", VidhanSabhawhereHe_SheVotesValueEle);
+        FormControlKaryakarta.selectVidhanSabhaHeSheVotes(vidhanSabhaWhereHeSheVotes);
 
         // Booth where He/She Votes
-        WebElement BoothwhereHe_SheVotesValueEle = driver
-                .findElement(By.xpath("//input[contains(@placeholder, 'Booth where He/She Votes')]"));
-        BoothwhereHe_SheVotesValueEle.clear();
-        BoothwhereHe_SheVotesValueEle.sendKeys(boothWhereHeSheVotes);
+        FormControlKaryakarta.enterBoothWhereHeSheVotes(boothWhereHeSheVotes);
 
         // Voter Id
-        WebElement voterIdValueEle = driver.findElement(By.xpath("//input[contains(@placeholder, 'ex. UTC026351')]"));
-        voterIdValueEle.sendKeys(voterId);
+        FormControlKaryakarta.enterVoterId(voterId);
 
         // Aadhaar Number
-        WebElement AadhaarNumberEle = driver
-                .findElement(By.xpath("//input[contains(@placeholder, 'ex. 765478961243')]"));
+
         // Validation AadhaarNumber.
         apply_validation_in_aadhar_number();
-        AadhaarNumberEle.sendKeys(aadharNumber);
+        FormControlKaryakarta.enterAadharNumber(aadharNumber);
 
         // Panna Number
-        WebElement PannaNumberEle = driver.findElement(By.xpath("//input[contains(@placeholder, 'Panna Number')]"));
+
         // Panna Number Validation
         apply_validation_in_panna_number();
-        PannaNumberEle.sendKeys(pannaNumber);
+        FormControlKaryakarta.enterPannaNumber(pannaNumber);
 
         // Ration Card Number
-        WebElement RationCardNumberEle = driver
-                .findElement(By.xpath("//input[contains(@placeholder, 'Ration Card Number')]"));
-        RationCardNumberEle.sendKeys(rationCardNumber);
+        FormControlKaryakarta.enterRationCardNumber(rationCardNumber);
 
         // FacebookProfile
-        WebElement FacebookProfileEle = driver
-                .findElement(By.xpath("//input[contains(@placeholder, 'www.fb.com/username')]"));
-        FacebookProfileEle.sendKeys(facebookProfile);
+        FormControlKaryakarta.enterFacebookProfile(facebookProfile);
 
         // TwitterProfile
-        WebElement TwitterProfileEle = driver
-                .findElement(By.xpath("//input[contains(@placeholder, 'www.twitter.com/username')]"));
-        TwitterProfileEle.sendKeys(twitterProfile);
+        FormControlKaryakarta.enterTwitterProfile(twitterProfile);
 
         // InstagramProfile
-        WebElement InstagramProfileEle = driver
-                .findElement(By.xpath("//input[contains(@placeholder, 'www.instagram.com/username')]"));
-        InstagramProfileEle.sendKeys(instagramProfile);
+        FormControlKaryakarta.enterInstagramProfile(instagramProfile);
 
         // LinkedInProfile
-        WebElement LinkedInProfileEle = driver
-                .findElement(By.xpath("//input[contains(@placeholder, 'www.linkedin.com/username')]"));
-        LinkedInProfileEle.sendKeys(linkedinProfile);
+        FormControlKaryakarta.enterLinkedinProfile(linkedinProfile);
 
         // Photo
-        WebElement photoEle = driver.findElement(By.xpath("//input[@type='file']"));
         image = System.getProperty("user.dir") + "\\src\\main\\java\\resources\\image1.jpg";
-        photoEle.sendKeys(image);
+        FormControlKaryakarta.uploadImage(image);
 
         // click on Salutation
-        WebElement SalutationEle = driver.findElements(By.className("mat-select-placeholder")).get(1);
-        SalutationEle.click();
+        FormControlKaryakarta.clickOnSalutation();
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
         Thread.sleep(2000);
         // Select SalutationEle
-        WebElement salutationValueEle = driver
-                .findElement(By.xpath("//mat-option//span[contains(text(),'" + salutation + "')]"));
-        js.executeScript("arguments[0].click();", salutationValueEle);
+        FormControlKaryakarta.selectSalutation(salutation);
 
         // Sub Caste
-        WebElement SubCasteEle = driver.findElement(By.xpath("//input[contains(@placeholder, 'Sub caste')]"));
-        SubCasteEle.sendKeys(subCaste);
+        FormControlKaryakarta.enterSubCaste(subCaste);
 
         // Qualification
-        WebElement QualificationEle = driver.findElement(By.xpath("//input[contains(@placeholder, 'Qualification')]"));
-        QualificationEle.sendKeys(qualification);
+        FormControlKaryakarta.enterQualification(qualification);
 
         // Religion
-        WebElement ReligionEle = driver.findElements(By.className("mat-select-placeholder")).get(1);
-        ReligionEle.click();
+        FormControlKaryakarta.clickOnReligion();
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
         Thread.sleep(2000);
         // Select Religion
-        WebElement ReligionEleValueEle = driver
-                .findElement(By.xpath("//mat-option//span[contains(text(),'" + religion + "')]"));
-        js.executeScript("arguments[0].click();", ReligionEleValueEle);
+        FormControlKaryakarta.selectReligion(religion);
 
         // Active Member Id
-        WebElement ActiveMemberIdValueEle = driver
-                .findElement(By.xpath("//input[contains(@placeholder, 'Active Member Id')]"));
-        ActiveMemberIdValueEle.sendKeys(activeMemberId);
+        FormControlKaryakarta.enterActiveMemberId(activeMemberId);
 
         // Party Zila and Party Mandal
         apply_validation_in_party_zila_and_mandal();
 
         // click Select Party Zila Id
-        WebElement SelectPartyZilaIdEle = driver.findElement(By.xpath("//div[contains(text(),'Select Party Zila')]"));
-        WebElement SelectPartyMandalEle = driver.findElement(By.xpath("//div[contains(text(),'Select Party Mandal')]"));
-        SelectPartyZilaIdEle.click();
+        WebElement SelectPartyZilaIdEle = sangathanPageObjects.getSelectPartyZilaEle();
+        ExceptionHandler.clickElementWithRetry(SelectPartyZilaIdEle);
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
         Thread.sleep(2000);
+
         // Select Party Zila Id
-        WebElement PartyZilaIdValueEle = driver
-                .findElement(By.xpath("//div//span[contains(text(),'" + partyZila + "')]"));
+        WebElement PartyZilaIdValueEle = sangathanPageObjects.getPartyZilaValueEle(partyZila);
         wait.until(ExpectedConditions.visibilityOf(PartyZilaIdValueEle));
-        js.executeScript("arguments[0].click();", PartyZilaIdValueEle);
+        ExceptionHandler.clickElementWithRetry(PartyZilaIdValueEle);
 
-        // click Select Party Mandal
-
-        List<WebElement> partyMandalOverlayEle = driver
-                .findElements(By.xpath("//div[@class='overlay ng-star-inserted']"));
-        while (partyMandalOverlayEle.size() > 0) {
-            System.out.println("partyMandal Overlay 1 ........");
-            partyMandalOverlayEle = driver.findElements(By.xpath("//div[@class='overlay ng-star-inserted']"));
-            Thread.sleep(1000);
-        }
-
-        System.out.println("--- overlay gone of party Mandal-------");
-
-        SelectPartyMandalEle = driver.findElement(By.xpath("//div[contains(text(),'Select Party Mandal')]"));
-        wait.until(ExpectedConditions.elementToBeClickable(SelectPartyMandalEle)).click();
+        // Party Mandal
+        WebElement SelectPartyMandalEle = sangathanPageObjects.getSelectPartyMandalEle();
+        wait.until(ExpectedConditions.elementToBeClickable(SelectPartyMandalEle));
+        ExceptionHandler.clickElementWithRetry(SelectPartyMandalEle);
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
         Thread.sleep(2000);
         // Select Party Mandal
@@ -796,7 +805,7 @@ public class WardKaryakarta {
         WebElement addButtonEle = driver.findElement(By.xpath("//button//span[contains(text(),'Add')]"));
         js = (JavascriptExecutor) driver;
         js.executeScript("arguments[0].click();", addButtonEle);
-        Thread.sleep(5000);
+        load_wait.waitForPageLoad();
 
     }
 
@@ -809,8 +818,13 @@ public class WardKaryakarta {
     public void user_click_on_edit_button_for_recently_added_entry() throws InterruptedException {
         ngDriver = new NgWebDriver((JavascriptExecutor) driver);
         wait = new WebDriverWait(driver, Duration.ofSeconds(110));
+        // Object for SANGATHAN Page Object Class
+        sangathanPageObjects = new SangathanPageObjects(driver);
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
         Thread.sleep(5000);
+        WebElement data_entryDynamicTableEle = sangathanPageObjects.getData_EntryDynamicTableEle();
+        js = (JavascriptExecutor) driver;
+        js.executeScript("arguments[0].scrollIntoView(true);", data_entryDynamicTableEle);
         get_Karyakarta_Data_To_Edit(phoneNumber);
     }
 
@@ -940,6 +954,7 @@ public class WardKaryakarta {
 
         // Select Category
         WebElement SelectCategoryEle = driver.findElement(By.xpath("//div[contains(text(),'Select Category')]"));
+        js.executeScript("arguments[0].scrollIntoView(true);", SelectCategoryEle);
         copiedSelectedCategory = driver.findElement(with(By.className("ng-value-label")).below(SelectCategoryEle))
                 .getText();
         Assert.assertEquals(copiedSelectedCategory, category);
@@ -1117,23 +1132,23 @@ public class WardKaryakarta {
 
         // primary fields
         // Name
-        FormControlKaryakarta.enterKaryakartaName(name);
+        FormControlKaryakarta.enterName(name);
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
 
         // Father and Husband Name
-        FormControlKaryakarta.enterKaryakartaRelationName(fatherName);
+        FormControlKaryakarta.enterRelationName(fatherName);
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
 
         // Designation
-        FormControlKaryakarta.clickOnkaryakartaDesignation();
+        FormControlKaryakarta.clickOnDesignation();
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
 
         // Select Designation
-        FormControlKaryakarta.selectKaryakartaDesignation(designation);
+        FormControlKaryakarta.selectDesignation(designation);
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
 
         // phone number
-        FormControlKaryakarta.enterKaryakartaPhoneNumber(duplicatePhoneNumber);
+        FormControlKaryakarta.enterPhoneNumber(duplicatePhoneNumber);
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
 
         user_click_on_add_button();
@@ -1168,23 +1183,23 @@ public class WardKaryakarta {
 
         // primary fields
         // Name
-        FormControlKaryakarta.enterKaryakartaName(name);
+        FormControlKaryakarta.enterName(name);
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
 
         // Father and Husband Name
-        FormControlKaryakarta.enterKaryakartaRelationName(fatherName);
+        FormControlKaryakarta.enterRelationName(fatherName);
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
 
         // Designation
-        FormControlKaryakarta.clickOnkaryakartaDesignation();
+        FormControlKaryakarta.clickOnDesignation();
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
 
         // Select Designation
-        FormControlKaryakarta.selectKaryakartaDesignation(designation);
+        FormControlKaryakarta.selectDesignation(designation);
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
 
         // phone number
-        FormControlKaryakarta.enterKaryakartaPhoneNumber(duplicatePhoneNumber);
+        FormControlKaryakarta.enterPhoneNumber(duplicatePhoneNumber);
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
 
         user_click_on_add_button();
@@ -1430,44 +1445,65 @@ public class WardKaryakarta {
         stdLandlineEle.sendKeys(Keys.CONTROL, "a", Keys.DELETE);
         stdLandlineEle.sendKeys(updatedLandlineNumber);
         // Clear Category
-
-        List<WebElement> selectCategoryEle = driver.findElements(By.xpath("//div[contains(text(),'Select Category')]"));
+        WebElement selectCategoryEle = sangathanPageObjects.getSelectCategoryEle();
         WebElement clearCategory = driver
-                .findElement(with(By.xpath("//span[@title='Clear all']")).toRightOf(selectCategoryEle.get(0)));
+                .findElement(with(By.xpath("//span[@title='Clear all']")).toRightOf(selectCategoryEle));
+        clearCategory.click();
 
         // Caste
-        List<WebElement> CasteEle = driver.findElements(By.xpath("//div[contains(text(),'Caste')]"));
-        // WebElement clearCaste =
-        // driver.findElement(with(By.xpath("//span[@title='Clear
-        // all']")).toRightOf(CasteEle.get(0)));
+        // WebElement CasteEle = sangathanPageObjects.getSelectCasteEle();
+//        WebElement clearCaste =
+//                driver.findElement(with(By.xpath("//span[@title='Clearall']")).toRightOf(CasteEle));
+
         // click on select Category
-        selectCategoryEle.get(0).click();
-        clearCategory.click();
+//        selectCategoryEle.get(0).click();
+//        clearCategory.click();
+//        apply_validation_in_category_and_caste();
+//
+//        selectCategoryEle.get(0).click();
+//
+//        // categoryValue = addDatadriven.get(12);
+//        WebElement categoryValueEle = driver
+//                .findElement(By.xpath("//div//span[contains(text(),'" + updatedCategory + "')]"));
+//        js.executeScript("arguments[0].click();", categoryValueEle);
+//        ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
+//        // Thread.sleep(2000);
+//
+//        List<WebElement> casteOverlayEle = driver.findElements(By.xpath("//div[@class='overlay ng-star-inserted']"));
+//        while (casteOverlayEle.size() > 0) {
+//            System.out.println("caste Overlay 1 ........");
+//            casteOverlayEle = driver.findElements(By.xpath("//div[@class='overlay ng-star-inserted']"));
+//            Thread.sleep(1000);
+//        }
+//        System.out.println("--------------- overlay gone----------------");
+//        Thread.sleep(2000);
+//
+//        // click on Caste
+//        WebElement CasteEleAfterwait = wait.until(ExpectedConditions.elementToBeClickable(CasteEle.get(0)));
+//        CasteEleAfterwait.click();
+//        WebElement CasteValueEle = driver.findElement(By.xpath("//div//span[contains(text(),'" + updatedCaste + "')]"));
+//        js.executeScript("arguments[0].click();", CasteValueEle);
+
+        // Category and Caste fields handle with validation
+        // Caste
+        WebElement CasteEle = sangathanPageObjects.getSelectCasteEle();
+        // Validation in category and caste
         apply_validation_in_category_and_caste();
 
-        selectCategoryEle.get(0).click();
-
-        // categoryValue = addDatadriven.get(12);
-        WebElement categoryValueEle = driver
-                .findElement(By.xpath("//div//span[contains(text(),'" + updatedCategory + "')]"));
-        js.executeScript("arguments[0].click();", categoryValueEle);
+        // click on select Category
+        FormControlKaryakarta.clickOnCategory();
+        WebElement categoryValueEle = sangathanPageObjects.getCategoryValueEle(category);
+        ExceptionHandler.clickElementWithRetry(categoryValueEle);
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        // Thread.sleep(2000);
-
-        List<WebElement> casteOverlayEle = driver.findElements(By.xpath("//div[@class='overlay ng-star-inserted']"));
-        while (casteOverlayEle.size() > 0) {
-            System.out.println("caste Overlay 1 ........");
-            casteOverlayEle = driver.findElements(By.xpath("//div[@class='overlay ng-star-inserted']"));
-            Thread.sleep(1000);
-        }
-        System.out.println("--------------- overlay gone----------------");
         Thread.sleep(2000);
 
         // click on Caste
-        WebElement CasteEleAfterwait = wait.until(ExpectedConditions.elementToBeClickable(CasteEle.get(0)));
-        CasteEleAfterwait.click();
-        WebElement CasteValueEle = driver.findElement(By.xpath("//div//span[contains(text(),'" + updatedCaste + "')]"));
-        js.executeScript("arguments[0].click();", CasteValueEle);
+        ExceptionHandler.clickElementWithRetry(CasteEle);
+
+        //select caste value
+        WebElement CasteValueEle = sangathanPageObjects.getCasteValueEle(caste);
+        ExceptionHandler.clickElementWithRetry(CasteValueEle);
+
 
         // Email
         WebElement emailEle = driver.findElement(By.xpath("//input[@placeholder='Email']"));
@@ -1644,42 +1680,68 @@ public class WardKaryakarta {
         ActiveMemberIdValueEle.sendKeys(updatedActiveMemberId);
 
         // Clear Party Zila
-        WebElement SelectPartyZilaIdEle = driver.findElement(By.xpath("//div[contains(text(),'Select Party Zila')]"));
+        WebElement SelectPartyZilaIdEle = sangathanPageObjects.getSelectPartyZilaEle();
         WebElement clearPartyZila = driver
                 .findElement(with(By.xpath("//span[@title='Clear all']")).toRightOf(SelectPartyZilaIdEle));
         clearPartyZila.click();
+//        // Party Zila and Party Mandal
+//        apply_validation_in_party_zila_and_mandal();
+//
+//        // click Select Party Zila Id
+//        WebElement SelectPartyMandalEle = driver.findElement(By.xpath("//div[contains(text(),'Select Party Mandal')]"));
+//        SelectPartyZilaIdEle.click();
+//        ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
+//        Thread.sleep(2000);
+//        // Select Party Zila Id
+//        WebElement PartyZilaIdValueEle = driver
+//                .findElement(By.xpath("//div//span[contains(text(),'" + updatedPartyZila + "')]"));
+//        js.executeScript("arguments[0].click();", PartyZilaIdValueEle);
+//
+//        // click Select Party Mandal
+//
+//        List<WebElement> partyMandalOverlayEle = driver
+//                .findElements(By.xpath("//div[@class='overlay ng-star-inserted']"));
+//        while (partyMandalOverlayEle.size() > 0) {
+//            System.out.println("partyMandal Overlay 1 ........");
+//            partyMandalOverlayEle = driver.findElements(By.xpath("//div[@class='overlay ng-star-inserted']"));
+//            Thread.sleep(1000);
+//        }
+//
+//        System.out.println("--- overlay gone of party Mandal-------");
+//
+//        SelectPartyMandalEle = driver.findElement(By.xpath("//div[contains(text(),'Select Party Mandal')]"));
+//        wait.until(ExpectedConditions.elementToBeClickable(SelectPartyMandalEle)).click();
+//        ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
+//        Thread.sleep(2000);
+//        // Select Party Mandal
+//        WebElement enterPartyMandalEle = driver.findElement(with(By.tagName("input")).below(SelectPartyMandalEle));
+//        enterPartyMandalEle.sendKeys(updatedPartyMandal);
+//        enterPartyMandalEle.sendKeys(Keys.ENTER);
+//        ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
+
         // Party Zila and Party Mandal
         apply_validation_in_party_zila_and_mandal();
 
         // click Select Party Zila Id
-        WebElement SelectPartyMandalEle = driver.findElement(By.xpath("//div[contains(text(),'Select Party Mandal')]"));
-        SelectPartyZilaIdEle.click();
+        //WebElement SelectPartyZilaIdEle = sangathanPageObjects.getSelectPartyZilaEle();
+        ExceptionHandler.clickElementWithRetry(SelectPartyZilaIdEle);
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
         Thread.sleep(2000);
+
         // Select Party Zila Id
-        WebElement PartyZilaIdValueEle = driver
-                .findElement(By.xpath("//div//span[contains(text(),'" + updatedPartyZila + "')]"));
-        js.executeScript("arguments[0].click();", PartyZilaIdValueEle);
+        WebElement PartyZilaIdValueEle = sangathanPageObjects.getPartyZilaValueEle(partyZila);
+        wait.until(ExpectedConditions.visibilityOf(PartyZilaIdValueEle));
+        ExceptionHandler.clickElementWithRetry(PartyZilaIdValueEle);
 
-        // click Select Party Mandal
-
-        List<WebElement> partyMandalOverlayEle = driver
-                .findElements(By.xpath("//div[@class='overlay ng-star-inserted']"));
-        while (partyMandalOverlayEle.size() > 0) {
-            System.out.println("partyMandal Overlay 1 ........");
-            partyMandalOverlayEle = driver.findElements(By.xpath("//div[@class='overlay ng-star-inserted']"));
-            Thread.sleep(1000);
-        }
-
-        System.out.println("--- overlay gone of party Mandal-------");
-
-        SelectPartyMandalEle = driver.findElement(By.xpath("//div[contains(text(),'Select Party Mandal')]"));
-        wait.until(ExpectedConditions.elementToBeClickable(SelectPartyMandalEle)).click();
+        // Party Mandal
+        WebElement SelectPartyMandalEle = sangathanPageObjects.getSelectPartyMandalEle();
+        wait.until(ExpectedConditions.elementToBeClickable(SelectPartyMandalEle));
+        ExceptionHandler.clickElementWithRetry(SelectPartyMandalEle);
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
         Thread.sleep(2000);
         // Select Party Mandal
         WebElement enterPartyMandalEle = driver.findElement(with(By.tagName("input")).below(SelectPartyMandalEle));
-        enterPartyMandalEle.sendKeys(updatedPartyMandal);
+        enterPartyMandalEle.sendKeys(partyMandal);
         enterPartyMandalEle.sendKeys(Keys.ENTER);
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
 
@@ -1699,11 +1761,16 @@ public class WardKaryakarta {
         wait = new WebDriverWait(driver, Duration.ofSeconds(110));
         ngDriver = new NgWebDriver((JavascriptExecutor) driver);
         js = (JavascriptExecutor) driver;
+        // Object for SANGATHAN Page Object Class
+        sangathanPageObjects = new SangathanPageObjects(driver);
         Map<String, String> map = reason_for_person_deletion.asMap(String.class, String.class);
         String deleteReason = map.get("Reason For Person Deletion");
-        fatherName = map.get("Father Name");
+        //fatherName = map.get("Father Name");
         Thread.sleep(2000);
-        get_karyakarta_data_to_delete(phoneNumber);
+        WebElement data_entryDynamicTableEle = sangathanPageObjects.getData_EntryDynamicTableEle();
+        js.executeScript("arguments[0].scrollIntoView(true);", data_entryDynamicTableEle);
+
+        get_karyakarta_data_to_delete(updatedPhoneNumber);
         WebElement deleteEleBoxText = driver
                 .findElement(By.xpath("//mat-label[.='Please Select A Reason For Deletion']"));
         wait.until(ExpectedConditions.visibilityOf(deleteEleBoxText));
@@ -2902,14 +2969,15 @@ public class WardKaryakarta {
     public void apply_validation_in_whatsapp_number() throws InterruptedException {
 
         wait2 = new WebDriverWait(driver, Duration.ofSeconds(60));
-        WebElement whatsAppEle = driver.findElement(By.xpath("//input[@placeholder='WhatsApp Number']"));
+        SangathanPageObjects sangathanPageObjects = new SangathanPageObjects(driver);
+        WebElement whatsAppEle = sangathanPageObjects.getWhatsAppNumber();
         WebElement stdCodeEle = driver.findElement(By.xpath("//input[@placeholder='STD Code']"));
         // Enter wrong whatsApp Number
-        whatsAppEle.sendKeys("1234567890");
+        // whatsAppEle.sendKeys("1234567890");
+        FormControlKaryakarta.enterWhatsAppNumber("1234567890");
         js.executeScript("arguments[0].click();", stdCodeEle);
         Thread.sleep(2000);
         WebElement errorTextElement = driver.findElement(with(By.className("mat-error")).below(whatsAppEle));
-        errorTextElement = driver.findElement(with(By.className("mat-error")).below(whatsAppEle));
         wait2.until(ExpectedConditions.textToBePresentInElement(errorTextElement, "Please enter a valid input"));
         whatsAppEle.clear();
 
@@ -2918,37 +2986,36 @@ public class WardKaryakarta {
     // @And("^apply validation in category and caste$")
     public void apply_validation_in_category_and_caste() throws InterruptedException {
         // Select Category
-        List<WebElement> selectCategoryEle = driver.findElements(By.xpath("//div[contains(text(),'Select Category')]"));
-        System.out.println("selectCategoryEle size :" + selectCategoryEle.size());
+        WebElement selectCategoryEle = sangathanPageObjects.getSelectCategoryEle();
 
         // Caste
-        List<WebElement> CasteEle = driver.findElements(By.xpath("//div[contains(text(),'Caste')]"));
+        WebElement CasteEle = sangathanPageObjects.getSelectCasteEle();
 
         Actions actions = new Actions(driver);
-        actions.moveToElement(CasteEle.get(0)).perform();
+        actions.moveToElement(CasteEle).perform();
         Thread.sleep(4000);
         // Caste Tooltip
-        WebElement casteToolltip = driver.findElement(By.xpath("//*[@class='mat-tooltip mat-tooltip-show']"));
+
+        WebElement casteToolltip = sangathanPageObjects.getCasteToolTipTextEle();
         String copiedCasteTooltip = casteToolltip.getText();
         Assert.assertEquals(copiedCasteTooltip, "Please select a category first to enter or select a caste");
         System.out.println("copied text for caste tooltip :" + casteToolltip.getText());
         Thread.sleep(2000);
-        actions.moveToElement(selectCategoryEle.get(0)).perform();
+        actions.moveToElement(selectCategoryEle).perform();
 
     }
 
     // @And("^apply validation in email$")
     public void apply_validation_in_email() throws InterruptedException {
         // Full Address
-        WebElement fullAddressEle = driver.findElement(By.xpath("//input[@placeholder='Full Address']"));
+        WebElement fullAddressEle = sangathanPageObjects.getFullAddressEle();
         // Email
-        WebElement emailEle = driver.findElement(By.xpath("//input[@placeholder='Email']"));
-        // enter wrong email
-        emailEle.sendKeys("dsdsd");
+        WebElement emailEle = sangathanPageObjects.getEmailEle();
+        // enter an invalid email
+        FormControlKaryakarta.enterEmail("yueyewu");
         fullAddressEle.click();
         Thread.sleep(2000);
-        WebElement errorTextElement = driver.findElement(with(By.className("mat-error")));
-        errorTextElement = driver.findElement(with(By.className("mat-error")).below(emailEle));
+        WebElement errorTextElement = driver.findElement(with(By.className("mat-error")).below(emailEle));
         wait2.until(ExpectedConditions.textToBePresentInElement(errorTextElement, "Please enter a valid input"));
         Thread.sleep(2000);
         emailEle.clear();
@@ -2957,16 +3024,14 @@ public class WardKaryakarta {
     // @And("^apply validation in aadhar number$")
     public void apply_validation_in_aadhar_number() throws InterruptedException {
         // Voter Id
-        WebElement voterIdValueEle = driver.findElement(By.xpath("//input[contains(@placeholder, 'ex. UTC026351')]"));
+        WebElement voterIdValueEle = sangathanPageObjects.getVoterIDEle();
         // Aadhaar Number
-        WebElement AadhaarNumberEle = driver
-                .findElement(By.xpath("//input[contains(@placeholder, 'ex. 765478961243')]"));
+        WebElement AadhaarNumberEle = sangathanPageObjects.getAadharNumberEle();
         // Enter AadhaarNumber less than 12 digit
-        AadhaarNumberEle.sendKeys("4343");
+        FormControlKaryakarta.enterAadharNumber("6745");
         voterIdValueEle.click();
         Thread.sleep(2000);
-        WebElement errorTextElement = driver.findElement(with(By.className("mat-error")));
-        errorTextElement = driver.findElement(with(By.className("mat-error")).below(AadhaarNumberEle));
+        WebElement errorTextElement = driver.findElement(with(By.className("mat-error")).below(AadhaarNumberEle));
         wait2.until(
                 ExpectedConditions.textToBePresentInElement(errorTextElement, "Enter valid 12 digit aadhar number"));
         AadhaarNumberEle.clear();
@@ -2977,15 +3042,13 @@ public class WardKaryakarta {
     public void apply_validation_in_panna_number() throws InterruptedException {
         wait2 = new WebDriverWait(driver, Duration.ofSeconds(60));
         // Voter Id
-        WebElement voterIdValueEle = driver.findElement(By.xpath("//input[contains(@placeholder, 'ex. UTC026351')]"));
-        // Panna Number
-        WebElement PannaNumberEle = driver.findElement(By.xpath("//input[contains(@placeholder, 'Panna Number')]"));
-        // Enter PannaNumber less than 3
-        PannaNumberEle.sendKeys("1");
+        WebElement voterIdValueEle = sangathanPageObjects.getVoterIDEle();
+        // Enter Panna Number
+        WebElement PannaNumberEle = sangathanPageObjects.getPannaNumberEle();
+        FormControlKaryakarta.enterPannaNumber("1");
         voterIdValueEle.click();
         Thread.sleep(2000);
-        WebElement errorTextElement = driver.findElement(with(By.className("mat-error")));
-        errorTextElement = driver.findElement(with(By.className("mat-error")).below(PannaNumberEle));
+        WebElement errorTextElement = driver.findElement(with(By.className("mat-error")).below(PannaNumberEle));
         wait2.until(ExpectedConditions.textToBePresentInElement(errorTextElement, "Please enter a valid input"));
         PannaNumberEle.clear();
 
@@ -2993,9 +3056,9 @@ public class WardKaryakarta {
 
     public void apply_validation_in_party_zila_and_mandal() throws InterruptedException {
         // click Select Party Mandal
-        WebElement SelectPartyMandalEle = driver.findElement(By.xpath("//div[contains(text(),'Select Party Mandal')]"));
+        WebElement SelectPartyMandalEle = sangathanPageObjects.getSelectPartyMandalEle();
         SelectPartyMandalEle.click();
-        WebElement popUpEle = driver.findElement(By.className("mat-simple-snack-bar-content"));
+        WebElement popUpEle = sangathanPageObjects.getPop_UPEle();
         String popUpTextPatyMandal = wait.until(ExpectedConditions.visibilityOf(popUpEle)).getText();
         System.out.println("popUpTextPatyMandal :" + popUpTextPatyMandal);
         Assert.assertEquals(popUpTextPatyMandal, "Please select party zila");
@@ -3007,8 +3070,9 @@ public class WardKaryakarta {
 
     public void apply_validation_in_dob() throws InterruptedException {
         wait2 = new WebDriverWait(driver, Duration.ofSeconds(60));
-        WebElement dobEle = driver.findElement(By.xpath("//input[@data-placeholder='Dob']"));
-        WebElement PannaNumberEle = driver.findElement(By.xpath("//input[contains(@placeholder, 'Panna Number')]"));
+        sangathanPageObjects = new SangathanPageObjects(driver);
+        WebElement dobEle = sangathanPageObjects.getDOBEle();
+        WebElement PannaNumberEle = sangathanPageObjects.getPannaNumberEle();
         String dobValue = "01/12/2022";
         dobEle.sendKeys(dobValue);
         PannaNumberEle.click();
@@ -3059,8 +3123,8 @@ public class WardKaryakarta {
                 int phoneNumberRowSize = phoneNumberRows.size();
                 System.out.println("phoneNumberRowSize: " + phoneNumberRowSize);
                 for (int phoneNumberRow = 0; phoneNumberRow < phoneNumberRowSize; phoneNumberRow++) {
-                    System.out.println("phoneNumberRow:" + phoneNumberRow);
                     String phoneNumberValue = phoneNumberRows.get(phoneNumberRow).getText();
+                    System.out.println("phoneNumberValue: " + phoneNumberValue);
                     if (phoneNumberValue.contains(phoneNumber)) {
                         System.out.println("phoneNumberValue>>: " + phoneNumberValue);
                         WebElement actionButtonEle = driver
@@ -3074,6 +3138,7 @@ public class WardKaryakarta {
                         js.executeScript("arguments[0].click();", editButtonEle);
                         ngDriver = new NgWebDriver((JavascriptExecutor) driver);
                         Thread.sleep(2000);
+                        return;
 
                     }
                 }

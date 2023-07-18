@@ -1,18 +1,22 @@
 package resources;
 
-import org.openqa.selenium.By;
-import org.openqa.selenium.SearchContext;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
 import java.util.List;
 
 public class WardPageObjects {
 
     WebDriver driver;
+    WebDriverWait wait;
+    int MAX_RETRIES = 5;
     By wardAddEntryButton = By.xpath("(//h5[text()='Ward']/following::button[contains(., 'Add Entry')])[1]");
 
     By wardFilters = By.xpath("//div[@class='ng-value-container']");
+
+    By getSelectedDropdownElements = By.xpath("//div[@class='ng-value ng-star-inserted']");
 
 
 
@@ -60,6 +64,25 @@ public class WardPageObjects {
     public WebElement getOrganisationSubUnitEle(String organisationSubUnitName){
         return driver.findElement(By.xpath("(//div[contains(text(),'" + organisationSubUnitName + "')])[2]"));
 
+    }
+
+    public List<WebElement> getSelectedDropdownEle(){
+        wait = new WebDriverWait(driver, Duration.ofSeconds(40));
+        wait.until(ExpectedConditions.presenceOfElementLocated(getSelectedDropdownElements));
+        return driver.findElements(getSelectedDropdownElements);
+    }
+
+    public void waitForVisibilityOfEle(WebElement element) {
+        int retries = 0;
+        wait = new WebDriverWait(driver, Duration.ofSeconds(40));
+        while (retries < MAX_RETRIES) {
+            try {
+
+
+            } catch (StaleElementReferenceException e) {
+
+            }
+        }
     }
 
 
