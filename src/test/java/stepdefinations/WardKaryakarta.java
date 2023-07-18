@@ -802,9 +802,7 @@ public class WardKaryakarta {
     public void user_click_on_add_button() throws InterruptedException {
 
         // click on Add button
-        WebElement addButtonEle = driver.findElement(By.xpath("//button//span[contains(text(),'Add')]"));
-        js = (JavascriptExecutor) driver;
-        js.executeScript("arguments[0].click();", addButtonEle);
+        FormControlKaryakarta.clickOnAddEntryButton();
         load_wait.waitForPageLoad();
 
     }
