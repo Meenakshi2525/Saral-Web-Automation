@@ -17,8 +17,7 @@ public class ElementUtils {
 
     public static void main(String[] args) throws InterruptedException {
 
-        DriverFactory driverFactory = new DriverFactory();
-        driverFactory.initializeBrowser("chrome");
+        DriverFactory.getDriver();
 
 
     }
@@ -32,7 +31,7 @@ public class ElementUtils {
     }
 
     public void typeTextIntoElement(WebElement element, String textToBeTyped, long durationInSeconds) {
-        driver = DriverFactory.getDriver();
+        driver = DriverFactory.getInstance().getDriver();
         WebElement webElement = waitForElement(element, durationInSeconds);
 
         webElement.click();

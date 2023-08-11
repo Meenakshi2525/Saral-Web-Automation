@@ -6,6 +6,7 @@ import java.util.List;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+
 import static org.openqa.selenium.support.locators.RelativeLocator.with;
 
 public class SangathanPageObjects {
@@ -28,7 +29,11 @@ public class SangathanPageObjects {
 
     By designationClick = By.xpath("//div[contains(text(),'Select Designation')]");
 
-    By hasSmartPhoneClick = By.xpath("//*[contains(text(),'Has Smartphone')]");
+    By designaionClearClickEle = By.xpath("//ng-select[@dropdownposition='bottom']//span[@title='Clear all']");
+
+    By selectedDropdownListEle = By.className("ng-value-label");
+
+    By hasSmartPhoneClick = By.xpath("//div[contains(text(),'Has Smartphone')]");
 
     By ageEle = By.xpath("//input[@placeholder='Age']");
 
@@ -39,6 +44,8 @@ public class SangathanPageObjects {
 
     By phoneEle = By.xpath("//input[@placeholder='Phone Number']");
 
+    By primaryMemberIdEle = By.xpath("//input[@placeholder='Primary Member Id']");
+
     By stdCodeEle = By.xpath("//input[@placeholder='STD Code']");
 
 
@@ -48,7 +55,7 @@ public class SangathanPageObjects {
 
     By selectCategoryEle = By.xpath("//div[contains(text(),'Select Category')]");
 
-    By clearCategoryEle = By.xpath("//span[@title='Clear all']");
+    By clearDropdownEle = By.xpath("//span[@title='Clear all']");
 
     By selectCasteEle = By.xpath("//div[contains(text(),'Caste')]");
 
@@ -96,24 +103,33 @@ public class SangathanPageObjects {
 
     By photoEle = By.xpath("//input[@type='file']");
 
-    By salutationEle = By.className("mat-select-placeholder");
+    By salutationEle = By.xpath("//mat-select");
 
     By subCasteEle = By.xpath("//input[contains(@placeholder, 'Sub caste')]");
 
     By qualificationEle = By.xpath("//input[contains(@placeholder, 'Qualification')]");
 
-    By religionEle = By.className("mat-select-placeholder");
+    By religionEle = By.xpath("//mat-select");
 
     By activeMemberIDEle = By.xpath("//input[contains(@placeholder, 'Active Member Id')]");
 
     By selectPartyZilaEle = By.xpath("//div[contains(text(),'Select Party Zila')]");
 
+    By selectOptionsValueEle = By .className("ng-value-label");
+
     By selectPartyMandalEle = By.xpath("//div[contains(text(),'Select Party Mandal')]");
     By pop_upEle = By.className("mat-simple-snack-bar-content");
+    By data_entry_dialogue_ele = By.xpath("//mat-dialog-container");
+
+    By textInDialogueEle = By.xpath("//mat-dialog-container//div[@class='mat-dialog-title']");
+
+    By cancelDialogButtonEle = By.xpath("//span[contains(.,'Cancel')]");
 
     By data_entryDynamicTableEle = By.xpath("//table");
 
-    By addButtonEle = By.xpath("//button//span[contains(text(),'Add')]");
+    By addButtonEle = By.xpath("//button[@type='submit']");
+
+    By cancelButtonEle = By.xpath("//span[contains(.,'Cancel')]");
 
     public SangathanPageObjects(WebDriver driver) {
 
@@ -152,13 +168,20 @@ public class SangathanPageObjects {
     public WebElement getDesignationValueEle(String designationName) {
         return driver.findElement(By.xpath("//div//span[contains(text(),'" + designationName + "')]"));
     }
+    public WebElement getSelectedDesignationEle(){
+        return driver.findElement(with(selectedDropdownListEle).below(designationClick));
+    }
 
-    public WebElement getHasSmartPhoneEle() {
+    public WebElement getHasSmartPhoneClickEle() {
         return driver.findElement(hasSmartPhoneClick);
     }
 
     public WebElement getHasSmartPhoneValueEle(String hasSmartPhoneValue) {
-        return driver.findElement(By.xpath("//div//span[contains(text(),'" + hasSmartPhoneValue + "')]"));
+        return driver.findElement(By.xpath("//span[@class='ng-option-label ng-star-inserted' and text() = '" + hasSmartPhoneValue + "']"));
+    }
+
+    public WebElement getSelectedHasSmartPhoneEle(){
+        return driver.findElement(with(selectedDropdownListEle).below(hasSmartPhoneClick));
     }
 
     public WebElement getAgeEle() {
@@ -177,6 +200,10 @@ public class SangathanPageObjects {
         return driver.findElement(phoneEle);
     }
 
+    public WebElement getPrimaryMemberIdEle(){
+        return driver.findElement(primaryMemberIdEle);
+    }
+
     public WebElement getWhatsAppNumber() {
         return driver.findElement(whatsAppEle);
     }
@@ -189,12 +216,22 @@ public class SangathanPageObjects {
         return driver.findElement(landlineNumberEle);
     }
 
+    public WebElement getSelectedGenderValueEle(String selectedGenderValue){
+        return driver.findElement(By.xpath("//mat-radio-button[@value='" + selectedGenderValue + "']"));
+    }
+
     public WebElement getSelectCategoryEle() {
         return driver.findElement(selectCategoryEle);
     }
 
-    public WebElement clearCategoryEle(){
-        return driver.findElement(clearCategoryEle);
+    public WebElement getClearCategoryEle(){
+        return driver.findElement(with(clearDropdownEle).toRightOf(selectCategoryEle));
+    }
+
+    public WebElement getClearDesignationEle(){
+
+        //return driver.findElement(with(clearDropdownEle).toRightOf(designationClick));
+        return driver.findElement(designaionClearClickEle);
     }
 
     public WebElement getSelectCasteEle() {
@@ -236,6 +273,9 @@ public class SangathanPageObjects {
     public WebElement getDistrictValueEle(String districtName) {
         return driver.findElement(By.xpath("//div//span[contains(text(),'" + districtName + "')]"));
     }
+    public WebElement getClearDistrictEle(){
+        return driver.findElement(with(clearDropdownEle).toRightOf(selectDistrictEle));
+    }
 
     public WebElement getPincodeEle() {
         return driver.findElement(pincodeEle);
@@ -244,6 +284,13 @@ public class SangathanPageObjects {
     public WebElement getSelectEducationEle() {
         return driver.findElement(selectEducationEle);
     }
+    public WebElement getEducationValueEle(String educationName) {
+        return driver.findElement(By.xpath("//div//span[contains(text(),'" + educationName + "')]"));
+    }
+    public WebElement getClearEducationEle(){
+        return driver.findElement(with(clearDropdownEle).toRightOf(selectEducationEle));
+    }
+
 
     public WebElement getFacebookProfileEle() {
         return driver.findElement(facebookProfileEle);
@@ -257,9 +304,7 @@ public class SangathanPageObjects {
         return driver.findElement(instagramProfileEle);
     }
 
-    public WebElement getEducationValueEle(String educationName) {
-        return driver.findElement(By.xpath("//div//span[contains(text(),'" + educationName + "')]"));
-    }
+
 
     public WebElement getSelectProfessionEle() {
         return driver.findElement(selectProfessionEle);
@@ -268,9 +313,16 @@ public class SangathanPageObjects {
     public WebElement getProfessionValueEle(String professionName) {
         return driver.findElement(By.xpath("//div//span[contains(text(),'" + professionName + "')]"));
     }
+    public WebElement getClearProfessionEle(){
+
+        return driver.findElement(with(clearDropdownEle).toRightOf(selectProfessionEle));
+    }
 
     public WebElement getSelectBikeEle() {
         return driver.findElement(selectBikeEle);
+    }
+    public WebElement getClearBikeEle(){
+        return driver.findElement(with(clearDropdownEle).toRightOf(selectBikeEle));
     }
 
     public WebElement getDropdownOptionsEle() {
@@ -281,6 +333,9 @@ public class SangathanPageObjects {
         return driver.findElement(selectCarEle);
 
     }
+    public WebElement getClearCarEle(){
+        return driver.findElement(with(clearDropdownEle).toRightOf(selectCarEle));
+    }
 
     public WebElement getSelectVidhanSabhaWhereHeSheVotesEle() {
         return driver.findElement(selectVidhanSabhaWhereHeSheVotes);
@@ -288,6 +343,9 @@ public class SangathanPageObjects {
 
     public WebElement getVidhanSabhaWhereHeSheVotesValueEle(String vidhanSabhaWhereHeSheVotesName) {
         return driver.findElement(By.xpath("//div//span[contains(text(),'" + vidhanSabhaWhereHeSheVotesName + "')]"));
+    }
+    public WebElement getClearVidhanSabhaWhereHeSheVotesEle(){
+        return driver.findElement(with(clearDropdownEle).toRightOf(selectVidhanSabhaWhereHeSheVotes));
     }
 
     public WebElement getBoothWhereHeSheVotesEle() {
@@ -312,6 +370,7 @@ public class SangathanPageObjects {
 
     public List<WebElement> getSelectSalutationEle() {
         return driver.findElements(salutationEle);
+
     }
 
     public WebElement getSalutationValueEle(String salutationValue) {
@@ -345,9 +404,26 @@ public class SangathanPageObjects {
     public WebElement getPartyZilaValueEle(String partyZilaName) {
         return driver.findElement(By.xpath("//div//span[contains(text(),'" + partyZilaName + "')]"));
     }
+    public WebElement getClearPartyZilaEle(){
+        return driver.findElement(with(clearDropdownEle).toRightOf(selectPartyZilaEle));
+    }
+
+    public WebElement getSelectedPartyZilaValueEle(){
+        return driver.findElement(with(selectOptionsValueEle).below(selectPartyZilaEle));
+    }
 
     public WebElement getSelectPartyMandalEle() {
         return driver.findElement(selectPartyMandalEle);
+    }
+
+    public WebElement getSelectPartyMandalValueEle(String partyMandalName){
+        return driver.findElement(By.xpath("//div//span[contains(text(),'" + partyMandalName + "')]"));
+    }
+    public WebElement getClearPartyMandalEle(){
+        return driver.findElement(with(clearDropdownEle).toRightOf(selectPartyMandalEle));
+    }
+    public WebElement getSelectedPartyMandalValueEle(){
+        return driver.findElement(with(selectOptionsValueEle).below(selectPartyMandalEle));
     }
 
     public WebElement getPop_UPEle() {
@@ -368,6 +444,21 @@ public class SangathanPageObjects {
 
     public WebElement getAddButtonEle(){
         return driver.findElement(addButtonEle);
+    }
+
+    public WebElement get_data_entry_dialogue_ele(){
+        return driver.findElement(data_entry_dialogue_ele);
+    }
+
+    public WebElement getTextInDialogueEle(){
+        return driver.findElement(textInDialogueEle);
+    }
+
+    public WebElement getCancelDialogButtonEle(){
+        return driver.findElement(cancelDialogButtonEle);
+    }
+    public WebElement getCancelButtonEle(){
+        return driver.findElement(cancelButtonEle);
     }
 
 

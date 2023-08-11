@@ -2,6 +2,7 @@ package stepdefinations;
 
 import com.paulhammant.ngwebdriver.NgWebDriver;
 import factory.*;
+import hooks.MyHooks;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -11,20 +12,22 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.interactions.SourceType;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import resources.Base;
+import resources.DriverFactory1;
 import resources.SangathanPageObjects;
 import resources.WardPageObjects;
 import utils.KaryakaryaDataEntryFormControl;
+import utils.SangathanVariableDeclaration;
 
 import java.io.IOException;
+import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.openqa.selenium.support.locators.RelativeLocator.with;
 
@@ -46,21 +49,10 @@ public class WardKaryakarta {
     public String organisationUnit;
     public String organisationSubUnit;
     // Karyakarta Details
-    public String name;
-    public String fatherName;
-    public String designation;
-    public String hasSmartPhone;
-    public String phoneNumber;
-    public String primaryMemberId;
-    public String age;
-    public String gender;
-    public String whatsApp;
-    public String updatedStdCode;
-    public String updatedLandlineNumber;
+
     public String updatedCategory;
     public String updatedCaste;
     public String updatedEmail;
-    public String updatedDob;
     public String updatedFullAddress;
     public String updatedVillage;
     public String updatedTaluka;
@@ -80,7 +72,6 @@ public class WardKaryakarta {
     public String updatedTwitterProfile;
     public String updatedLinkedinProfile;
     public String updatedInstagramProfile;
-    public String updatedImage;
     public String updatedSalutation;
     public String updatedSubCaste;
     public String updatedQualification;
@@ -99,40 +90,6 @@ public class WardKaryakarta {
     public String updatedAge;
     public String updatedGender;
     public String updatedWhatsApp;
-    public String stdCode;
-    public String landlineNumber;
-    public String category;
-    public String caste;
-    public String email;
-    public String dob;
-    public String fullAddress;
-    public String village;
-    public String taluka;
-    public String district;
-    public String pinCode;
-    public String education;
-    public String profession;
-    public String bike;
-    public String car;
-    public String vidhanSabhaWhereHeSheVotes;
-    public String boothWhereHeSheVotes;
-    public String voterId;
-    public String aadharNumber;
-    public String pannaNumber;
-    public String rationCardNumber;
-    public String facebookProfile;
-    public String twitterProfile;
-    public String linkedinProfile;
-    public String instagramProfile;
-    public String image;
-    public String salutation;
-    public String subCaste;
-    public String qualification;
-    public String religion;
-    public String activeMemberId;
-    public String partyZila;
-    public String partyMandal;
-    public String bloodGroup;
     public String copiedEnteredName;
     public String copiedEnteredFather_Husband_Name;
     public String copiedSelectedDesignation;
@@ -174,7 +131,6 @@ public class WardKaryakarta {
     public String copiedSelectedCategory;
     public String copiedSelectedCaste;
     public String copiedEmail;
-    public Base contextSteps;
 
     public SangathanPageObjects sangathanPageObjects;
 
@@ -185,7 +141,8 @@ public class WardKaryakarta {
             throws InterruptedException, IOException {
 
         // get driver
-        driver = DriverFactory.getDriver();
+        driver = DriverFactory.getInstance().getDriver();
+        //driver = DriverFactory1.getInstance().getDriver();
         // creating object for loading web page
         load_wait = new WaitUtils();
         System.out.println("URL for ward");
@@ -206,7 +163,7 @@ public class WardKaryakarta {
     public void user_click_on_sangathan_data_management_card_on_dashboard() throws InterruptedException {
 
         // Sangathan Data Entry
-        driver = DriverFactory.getDriver();
+        driver = DriverFactory.getInstance().getDriver();
         wait = new WebDriverWait(driver, Duration.ofSeconds(110));
         ngDriver = new NgWebDriver((JavascriptExecutor) driver);
 
@@ -217,8 +174,6 @@ public class WardKaryakarta {
         load_wait.waitForPageLoad();
         log.debug("user click on sangathan data management card");
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        Thread.sleep(2000);
-
     }
 
     @And("^user click on add entry button for ward karyakarta$")
@@ -442,7 +397,6 @@ public class WardKaryakarta {
         load_wait.waitForPageLoad();
         // wait.until(ExpectedConditions.elementToBeClickable(searchButtonEle)).click();
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        Thread.sleep(2000);
 
         String ward_karyakarta_filter_text = driver.findElement(By.xpath("//h6[@class='locations-list']")).getText();
         System.out.println(">>>>>>>ward_karyakarta_filter_text: " + ward_karyakarta_filter_text);
@@ -476,42 +430,48 @@ public class WardKaryakarta {
         ngDriver = new NgWebDriver((JavascriptExecutor) driver);
         wait = new WebDriverWait(driver, Duration.ofSeconds(110));
         Map<String, String> map = Karyakarta_primary_details.asMap(String.class, String.class);
-        name = map.get("Name");
-        fatherName = map.get("Father Name");
-        designation = map.get("Designation");
-        hasSmartPhone = map.get("Has Smartphone");
-        phoneNumber = map.get("Phone Number");
-        primaryMemberId = map.get("Primary Member ID");
-        age = map.get("Age");
+        //Name
+        SangathanVariableDeclaration.setNameVariableValue(map.get("Name"));
+        //Father Name
+        SangathanVariableDeclaration.setFatherNameVariable(map.get("Father Name"));
+        //Designation
+        SangathanVariableDeclaration.setDesignationVariable(map.get("Designation"));
+        //Has Smart Phone
+        SangathanVariableDeclaration.setHasSmartPhoneVariable(map.get("Has Smartphone"));
+        //Phone Number
+        SangathanVariableDeclaration.setPhoneNumberVariableValue(map.get("Phone Number"));
+        //Primary Member Id
+        SangathanVariableDeclaration.setPrimaryMemberIdVariable(map.get("Primary Member ID"));
+        //Age
+        SangathanVariableDeclaration.setAgeVariable(map.get("Age"));
 
-        // FormControlKaryakarta FormControlKaryakarta = new FormControlKaryakarta();
         // Name
-        FormControlKaryakarta.enterName(name);
+        FormControlKaryakarta.enterName(SangathanVariableDeclaration.getNameVariable());
 
         // Father and Husband Name
-        FormControlKaryakarta.enterRelationName(fatherName);
+        FormControlKaryakarta.enterRelationName(SangathanVariableDeclaration.getFatherNameVariable());
 
         // Designation
         FormControlKaryakarta.clickOnDesignation();
 
         // Select Designation
-        FormControlKaryakarta.selectDesignation(designation);
+        FormControlKaryakarta.selectDesignation(SangathanVariableDeclaration.getDesignationVariable());
 
         // hasSmartPhone
         FormControlKaryakarta.clickOnHasSmartPhone();
 
         // select hasSmartPhone
-        FormControlKaryakarta.selectDesignation(hasSmartPhone);
+        FormControlKaryakarta.selectDesignation(SangathanVariableDeclaration.getHasSmartPhoneVariable());
 
         // Primary Member
-        FormControlKaryakarta.enterPrimaryMemberId(primaryMemberId);
+        FormControlKaryakarta.enterPrimaryMemberId(SangathanVariableDeclaration.getPrimaryMemberIdVariable());
         // Age
-        FormControlKaryakarta.enterAge(age);
+        FormControlKaryakarta.enterAge(SangathanVariableDeclaration.getAgeVariable());
 
         // Validation for phone no.
         apply_validation_in_phone_number();
         // phone number
-        FormControlKaryakarta.enterPhoneNumber(phoneNumber);
+        FormControlKaryakarta.enterPhoneNumber(SangathanVariableDeclaration.getPhoneNumberVariable());
 
     }
 
@@ -520,49 +480,92 @@ public class WardKaryakarta {
         ngDriver = new NgWebDriver((JavascriptExecutor) driver);
         wait = new WebDriverWait(driver, Duration.ofSeconds(110));
         Map<String, String> map = karyakarta_details.asMap(String.class, String.class);
-        name = map.get("Name");
-        fatherName = map.get("Father Name");
-        designation = map.get("Designation");
-        hasSmartPhone = map.get("Has Smartphone");
-        phoneNumber = map.get("Phone Number");
-        primaryMemberId = map.get("Primary Member ID");
-        age = map.get("Age");
-        gender = map.get("Gender");
-        whatsApp = map.get("WhatsApp Number");
-        stdCode = map.get("STD Code");
-        landlineNumber = map.get("Landline Number");
-        category = map.get("Category");
-        caste = map.get("Caste");
-        email = map.get("Email");
-        dob = map.get("Dob");
-        fullAddress = map.get("Full Address");
-        village = map.get("Village");
-        taluka = map.get("Taluka");
-        district = map.get("District");
-        pinCode = map.get("Pin Code");
-        education = map.get("Education");
-        profession = map.get("Profession");
-        bike = map.get("Bike");
-        car = map.get("Car");
-        vidhanSabhaWhereHeSheVotes = map.get("Vidhan Sabha where he/she votes");
-        boothWhereHeSheVotes = map.get("Booth where he/she votes");
-        voterId = map.get("Voter Id");
-        aadharNumber = map.get("Aadhaar Number");
-        pannaNumber = map.get("Panna Number");
-        rationCardNumber = map.get("Ration Card Number");
-        facebookProfile = map.get("Facebook Profile");
-        twitterProfile = map.get("Twitter Profile");
-        instagramProfile = map.get("Intagram Profile");
-        linkedinProfile = map.get("Linkedin Profile");
-        image = map.get("Image");
-        salutation = map.get("Salutation");
-        subCaste = map.get("Sub Caste");
-        qualification = map.get("Qualification");
-        religion = map.get("Religion");
-        activeMemberId = map.get("Active Member Id");
-        partyZila = map.get("Party Zila");
-        partyMandal = map.get("Party Mandal");
-        bloodGroup = map.get("Blood Group");
+
+        SangathanVariableDeclaration.setNameVariableValue(map.get("Name"));
+
+        SangathanVariableDeclaration.setFatherNameVariable(map.get("Father Name"));
+
+        SangathanVariableDeclaration.setDesignationVariable(map.get("Designation"));
+
+        SangathanVariableDeclaration.setHasSmartPhoneVariable(map.get("Has Smartphone"));
+
+        SangathanVariableDeclaration.setPhoneNumberVariableValue(map.get("Phone Number"));
+
+        SangathanVariableDeclaration.setPrimaryMemberIdVariable(map.get("Primary Member ID"));
+
+        SangathanVariableDeclaration.setAgeVariable(map.get("Age"));
+
+        SangathanVariableDeclaration.setGenderVariable(map.get("Gender"));
+
+        SangathanVariableDeclaration.setWhatsAppVariable(map.get("WhatsApp Number"));
+
+        SangathanVariableDeclaration.setStdCodeVariable(map.get("STD Code"));
+
+        SangathanVariableDeclaration.setLandlineNumberVariable(map.get("Landline Number"));
+        //category = map.get("Category");
+        SangathanVariableDeclaration.setCategoryVariable(map.get("Category"));
+        //caste = map.get("Caste");
+        SangathanVariableDeclaration.setCasteVariable(map.get("Caste"));
+        //email = map.get("Email");
+        SangathanVariableDeclaration.setEmailVariable(map.get("Email"));
+        // dob = map.get("Dob");
+        SangathanVariableDeclaration.setDobVariable(map.get("Dob"));
+        // fullAddress = map.get("Full Address");
+        SangathanVariableDeclaration.setFullAddressVariable(map.get("Full Address"));
+        // village = map.get("Village");
+        SangathanVariableDeclaration.setVillageVariable(map.get("Village"));
+        //taluka = map.get("Taluka");
+        SangathanVariableDeclaration.setTalukaVariable(map.get("Taluka"));
+        //district = map.get("District");
+        SangathanVariableDeclaration.setDistrictVariable(map.get("District"));
+        // pinCode = map.get("Pin Code");
+        SangathanVariableDeclaration.setPinCodeVariable(map.get("Pin Code"));
+        //education = map.get("Education");
+        SangathanVariableDeclaration.setEducationVariable(map.get("Education"));
+        //profession = map.get("Profession");
+        SangathanVariableDeclaration.setProfessionVariable(map.get("Profession"));
+        //bike = map.get("Bike");
+        SangathanVariableDeclaration.setBikeVariable(map.get("Bike"));
+        //car = map.get("Car");
+        SangathanVariableDeclaration.setCarVariable(map.get("Car"));
+        //vidhanSabhaWhereHeSheVotes = map.get("Vidhan Sabha where he/she votes");
+        SangathanVariableDeclaration.setVidhanSabhaWhereHeSheVotesVariable(map.get("Vidhan Sabha where he/she votes"));
+        //boothWhereHeSheVotes = map.get("Booth where he/she votes");
+        SangathanVariableDeclaration.setBoothWhereHeSheVotesVariable(map.get("Booth where he/she votes"));
+        // voterId = map.get("Voter Id");
+        SangathanVariableDeclaration.setVoterIdVariable(map.get("Voter Id"));
+        //aadharNumber = map.get("Aadhaar Number");
+        SangathanVariableDeclaration.setAadharNumberVariable(map.get("Aadhaar Number"));
+        //pannaNumber = map.get("Panna Number");
+        SangathanVariableDeclaration.setPannaNumberVariable(map.get("Panna Number"));
+        //rationCardNumber = map.get("Ration Card Number");
+        SangathanVariableDeclaration.setRationCardNumberVariable(map.get("Ration Card Number"));
+        //facebookProfile = map.get("Facebook Profile");
+        SangathanVariableDeclaration.setFacebookProfileVariable(map.get("Facebook Profile"));
+        //twitterProfile = map.get("Twitter Profile");
+        SangathanVariableDeclaration.setTwitterProfileVariable(map.get("Twitter Profile"));
+        //instagramProfile = map.get("Intagram Profile");
+        SangathanVariableDeclaration.setInstagramProfileVariable(map.get("Intagram Profile"));
+        //linkedinProfile = map.get("Linkedin Profile");
+        SangathanVariableDeclaration.setLinkedinProfileVariable(map.get("Linkedin Profile"));
+        //image = map.get("Image");
+        SangathanVariableDeclaration.setImageVariable(map.get("Image"));
+        //salutation = map.get("Salutation");
+        SangathanVariableDeclaration.setSalutationVariable(map.get("Salutation"));
+        //subCaste = map.get("Sub Caste");
+        SangathanVariableDeclaration.setSubCasteVariable(map.get("Sub Caste"));
+        //qualification = map.get("Qualification");
+        SangathanVariableDeclaration.setQualificationVariable(map.get("Qualification"));
+        //religion = map.get("Religion");
+        SangathanVariableDeclaration.setReligionVariable(map.get("Religion"));
+//        activeMemberId = map.get("Active Member Id");
+        SangathanVariableDeclaration.setActiveMemberIdVariable(map.get("Active Member Id"));
+//        partyZila = map.get("Party Zila");
+        SangathanVariableDeclaration.setPartyZilaVariable(map.get("Party Zila"));
+//        partyMandal = map.get("Party Mandal");
+        SangathanVariableDeclaration.setPartyMandalVariable(map.get("Party Mandal"));
+//        bloodGroup = map.get("Blood Group");
+        SangathanVariableDeclaration.setBloodGroupVariable(map.get("Blood Group"));
 
         // Object for SANGATHAN Page Object Class
         sangathanPageObjects = new SangathanPageObjects(driver);
@@ -571,28 +574,28 @@ public class WardKaryakarta {
         wardPageObjects = new WardPageObjects(driver);
 
         // Name
-        FormControlKaryakarta.enterName(name);
+        FormControlKaryakarta.enterName(SangathanVariableDeclaration.getNameVariable());
 
         // Father and Husband Name
-        FormControlKaryakarta.enterRelationName(fatherName);
+        FormControlKaryakarta.enterRelationName(SangathanVariableDeclaration.getFatherNameVariable());
 
         // Designation
         FormControlKaryakarta.clickOnDesignation();
 
         // Select Designation
-        FormControlKaryakarta.selectDesignation(designation);
+        FormControlKaryakarta.selectDesignation(SangathanVariableDeclaration.getDesignationVariable());
 
         // hasSmartPhone
         FormControlKaryakarta.clickOnHasSmartPhone();
 
         // select hasSmartPhone
-        FormControlKaryakarta.selectHasSmartPhone(hasSmartPhone);
+        FormControlKaryakarta.selectHasSmartPhone(SangathanVariableDeclaration.getHasSmartPhoneVariable());
 
         // Primary Member
-        FormControlKaryakarta.enterPrimaryMemberId(primaryMemberId);
+        FormControlKaryakarta.enterPrimaryMemberId(SangathanVariableDeclaration.getPrimaryMemberIdVariable());
         // Age
-        FormControlKaryakarta.enterAge(age);
-        int ageInt = Integer.parseInt(age);
+        FormControlKaryakarta.enterAge(SangathanVariableDeclaration.getAgeVariable());
+        int ageInt = Integer.parseInt(SangathanVariableDeclaration.getAgeVariable());
         // Dob
         String calculatedDOB = dob_calculation_based_on_age_input(ageInt);
         WebElement dobEle = sangathanPageObjects.getDOBEle();
@@ -611,23 +614,23 @@ public class WardKaryakarta {
         Assert.assertEquals(day_and_month_updated_dob, copiedDob);
 
         // select gender
-        FormControlKaryakarta.selectGender(gender);
+        FormControlKaryakarta.selectGender(SangathanVariableDeclaration.getGenderVariable());
         // Blood Group
-        FormControlKaryakarta.enterBloodGroup(bloodGroup);
+        FormControlKaryakarta.enterBloodGroup(SangathanVariableDeclaration.getBloodGroupVariable());
 
         // Validation for phone no.
         apply_validation_in_phone_number();
         // phone number
-        FormControlKaryakarta.enterPhoneNumber(phoneNumber);
+        FormControlKaryakarta.enterPhoneNumber(SangathanVariableDeclaration.getPhoneNumberVariable());
         // STD Code
-        FormControlKaryakarta.enterSTDCode(stdCode);
+        FormControlKaryakarta.enterSTDCode(SangathanVariableDeclaration.getStdCodeVariable());
         // WhatsApp
         // Validation for WhatsApp No.
         apply_validation_in_whatsapp_number();
         //whatsAppEle.sendKeys(whatsApp);
-        FormControlKaryakarta.enterWhatsAppNumber(whatsApp);
+        FormControlKaryakarta.enterWhatsAppNumber(SangathanVariableDeclaration.getWhatsAppVarible());
         // Landline Number
-        FormControlKaryakarta.enterLandlineNumber(landlineNumber);
+        FormControlKaryakarta.enterLandlineNumber(SangathanVariableDeclaration.getLandlineNumberVariable());
 
         // Category and Caste fields handle with validation
         // Caste
@@ -637,16 +640,15 @@ public class WardKaryakarta {
 
         // click on select Category
         FormControlKaryakarta.clickOnCategory();
-        WebElement categoryValueEle = sangathanPageObjects.getCategoryValueEle(category);
+        WebElement categoryValueEle = sangathanPageObjects.getCategoryValueEle(SangathanVariableDeclaration.getCategoryVariable());
         ExceptionHandler.clickElementWithRetry(categoryValueEle);
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        Thread.sleep(2000);
 
         // click on Caste
         ExceptionHandler.clickElementWithRetry(CasteEle);
 
         //select caste value
-        WebElement CasteValueEle = sangathanPageObjects.getCasteValueEle(caste);
+        WebElement CasteValueEle = sangathanPageObjects.getCasteValueEle(SangathanVariableDeclaration.getCasteVariable());
         ExceptionHandler.clickElementWithRetry(CasteValueEle);
 
 
@@ -654,39 +656,36 @@ public class WardKaryakarta {
 
         // validation in email
         apply_validation_in_email();
-        FormControlKaryakarta.enterEmail(email);
+        FormControlKaryakarta.enterEmail(SangathanVariableDeclaration.getEmailVariable());
 
         // Full Address
-        FormControlKaryakarta.enterFullAddress(fullAddress);
+        FormControlKaryakarta.enterFullAddress(SangathanVariableDeclaration.getFullAddressVariable());
 
         // Village
-        FormControlKaryakarta.enterVillage(village);
+        FormControlKaryakarta.enterVillage(SangathanVariableDeclaration.getVillageVariable());
 
         // Taluka/Tehsil
-        FormControlKaryakarta.enterTaluka(taluka);
+        FormControlKaryakarta.enterTaluka(SangathanVariableDeclaration.getTalukaVariable());
 
         // District
         FormControlKaryakarta.clickOnDistrict();
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        Thread.sleep(2000);
         // Select District
-        FormControlKaryakarta.selectDistrict(district);
+        FormControlKaryakarta.selectDistrict(SangathanVariableDeclaration.getDistrictVariable());
 
         // PinCode
-        FormControlKaryakarta.enterPinCode(pinCode);
+        FormControlKaryakarta.enterPinCode(SangathanVariableDeclaration.getPinCodeVariable());
 
         // Education
         FormControlKaryakarta.clickOnEducation();
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        //Thread.sleep(2000);
         // Select Education
-        FormControlKaryakarta.selectEducation(education);
+        FormControlKaryakarta.selectEducation(SangathanVariableDeclaration.getEducationVariable());
         // click on Select Profession
         FormControlKaryakarta.clickOnProfession();
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        //Thread.sleep(2000);
         // Select Profession
-        FormControlKaryakarta.selectProfession(profession);
+        FormControlKaryakarta.selectProfession(SangathanVariableDeclaration.getProfessionVariable());
 
         // click on Bike
         FormControlKaryakarta.clickOnHasBike();
@@ -694,81 +693,78 @@ public class WardKaryakarta {
         Thread.sleep(1000);
 
         // Select yes or no for bike
-        FormControlKaryakarta.selectHasBike(bike);
+        FormControlKaryakarta.selectHasBike(SangathanVariableDeclaration.getBikeVariable());
 
         // click on Car
         FormControlKaryakarta.clickOnHasCar();
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
         Thread.sleep(1000);
         // Select yes or no for car
-        FormControlKaryakarta.selectHasCar(car);
+        FormControlKaryakarta.selectHasCar(SangathanVariableDeclaration.getCarVariable());
 
         // click on Vidhan Sabha where He/She Votes
         FormControlKaryakarta.clickOnVidhanSabhaHeSheVotes();
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        // Thread.sleep(2000);
         // Select Vidhan Sabha
-        FormControlKaryakarta.selectVidhanSabhaHeSheVotes(vidhanSabhaWhereHeSheVotes);
+        FormControlKaryakarta.selectVidhanSabhaHeSheVotes(SangathanVariableDeclaration.getVidhanSabhaWhereHeSheVotesVariable());
 
         // Booth where He/She Votes
-        FormControlKaryakarta.enterBoothWhereHeSheVotes(boothWhereHeSheVotes);
+        FormControlKaryakarta.enterBoothWhereHeSheVotes(SangathanVariableDeclaration.getBoothWhereHeSheVotesVariable());
 
         // Voter Id
-        FormControlKaryakarta.enterVoterId(voterId);
+        FormControlKaryakarta.enterVoterId(SangathanVariableDeclaration.getVoterIdVariable());
 
         // Aadhaar Number
 
         // Validation AadhaarNumber.
         apply_validation_in_aadhar_number();
-        FormControlKaryakarta.enterAadharNumber(aadharNumber);
+        FormControlKaryakarta.enterAadharNumber(SangathanVariableDeclaration.getAadharNumberVariable());
 
         // Panna Number
 
         // Panna Number Validation
         apply_validation_in_panna_number();
-        FormControlKaryakarta.enterPannaNumber(pannaNumber);
+        FormControlKaryakarta.enterPannaNumber(SangathanVariableDeclaration.getPannaNumberVariable());
 
         // Ration Card Number
-        FormControlKaryakarta.enterRationCardNumber(rationCardNumber);
+        FormControlKaryakarta.enterRationCardNumber(SangathanVariableDeclaration.getRationCardNumberVariable());
 
         // FacebookProfile
-        FormControlKaryakarta.enterFacebookProfile(facebookProfile);
+        FormControlKaryakarta.enterFacebookProfile(SangathanVariableDeclaration.getFacebookProfileVariable());
 
         // TwitterProfile
-        FormControlKaryakarta.enterTwitterProfile(twitterProfile);
+        FormControlKaryakarta.enterTwitterProfile(SangathanVariableDeclaration.getTwitterProfileVariable());
 
         // InstagramProfile
-        FormControlKaryakarta.enterInstagramProfile(instagramProfile);
+        FormControlKaryakarta.enterInstagramProfile(SangathanVariableDeclaration.getInstagramProfileVariable());
 
         // LinkedInProfile
-        FormControlKaryakarta.enterLinkedinProfile(linkedinProfile);
+        FormControlKaryakarta.enterLinkedinProfile(SangathanVariableDeclaration.getLinkedinProfileVariable());
 
         // Photo
-        image = System.getProperty("user.dir") + "\\src\\main\\java\\resources\\image1.jpg";
+        String image = System.getProperty("user.dir") + "\\src\\main\\java\\resources\\image1.jpg";
         FormControlKaryakarta.uploadImage(image);
 
         // click on Salutation
         FormControlKaryakarta.clickOnSalutation();
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        Thread.sleep(2000);
         // Select SalutationEle
-        FormControlKaryakarta.selectSalutation(salutation);
+        FormControlKaryakarta.selectSalutation(SangathanVariableDeclaration.getSalutationVariable());
 
         // Sub Caste
-        FormControlKaryakarta.enterSubCaste(subCaste);
+        FormControlKaryakarta.enterSubCaste(SangathanVariableDeclaration.getSubCasteVariable());
 
         // Qualification
-        FormControlKaryakarta.enterQualification(qualification);
+        FormControlKaryakarta.enterQualification(SangathanVariableDeclaration.getQualificationVariable());
 
         // Religion
         FormControlKaryakarta.clickOnReligion();
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        Thread.sleep(2000);
         // Select Religion
-        FormControlKaryakarta.selectReligion(religion);
+        FormControlKaryakarta.selectReligion(SangathanVariableDeclaration.getReligionVariable());
 
         // Active Member Id
-        FormControlKaryakarta.enterActiveMemberId(activeMemberId);
+        FormControlKaryakarta.enterActiveMemberId(SangathanVariableDeclaration.getActiveMemberIdVariable());
 
         // Party Zila and Party Mandal
         apply_validation_in_party_zila_and_mandal();
@@ -777,10 +773,9 @@ public class WardKaryakarta {
         WebElement SelectPartyZilaIdEle = sangathanPageObjects.getSelectPartyZilaEle();
         ExceptionHandler.clickElementWithRetry(SelectPartyZilaIdEle);
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        Thread.sleep(2000);
 
         // Select Party Zila Id
-        WebElement PartyZilaIdValueEle = sangathanPageObjects.getPartyZilaValueEle(partyZila);
+        WebElement PartyZilaIdValueEle = sangathanPageObjects.getPartyZilaValueEle(SangathanVariableDeclaration.getPartyZilaVariable());
         wait.until(ExpectedConditions.visibilityOf(PartyZilaIdValueEle));
         ExceptionHandler.clickElementWithRetry(PartyZilaIdValueEle);
 
@@ -789,11 +784,13 @@ public class WardKaryakarta {
         wait.until(ExpectedConditions.elementToBeClickable(SelectPartyMandalEle));
         ExceptionHandler.clickElementWithRetry(SelectPartyMandalEle);
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        Thread.sleep(2000);
         // Select Party Mandal
-        WebElement enterPartyMandalEle = driver.findElement(with(By.tagName("input")).below(SelectPartyMandalEle));
-        enterPartyMandalEle.sendKeys(partyMandal);
-        enterPartyMandalEle.sendKeys(Keys.ENTER);
+        //WebElement enterPartyMandalEle = driver.findElement(with(By.tagName("input")).below(SelectPartyMandalEle));
+        WebElement enterPartyMandalEle = sangathanPageObjects.getSelectPartyMandalValueEle(SangathanVariableDeclaration.getPartyMandalVariable());
+        //enterPartyMandalEle.sendKeys(partyMandal);
+        //enterPartyMandalEle.sendKeys(Keys.ENTER);
+        wait.until(ExpectedConditions.visibilityOf(enterPartyMandalEle));
+        ExceptionHandler.clickElementWithRetry(enterPartyMandalEle);
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
 
     }
@@ -808,7 +805,45 @@ public class WardKaryakarta {
     }
 
     @And("^user verify all the added data in the person table$")
-    public void user_verify_all_the_added_data_in_the_person_table() {
+    public void user_verify_all_the_added_data_in_the_person_table() throws InterruptedException {
+     Thread.sleep(2000);
+     FormControlKaryakarta.scrollToViewDynamicTable();
+     List<WebElement> dynamicTableRows = driver.findElements(By.xpath("//table//tr"));
+        if (dynamicTableRows.size() > 0) {
+            List<WebElement> firstRowElements = driver.findElements(By.xpath("(//table//tr)[2]//td")); // Fisrt Row
+            System.out.println(firstRowElements.size());
+
+
+            //Actual Data
+            Map<Integer, String> rowData = new HashMap<>();
+            int columnIndex = 0;
+            for (WebElement element : firstRowElements) {
+                rowData.put(columnIndex++, element.getText());
+            }
+
+            // Define expected values
+            Map<Integer, String> expectedData = new HashMap<>();
+            expectedData.put(0, "1");
+            expectedData.put(1, SangathanVariableDeclaration.getNameVariable());
+            expectedData.put(2, SangathanVariableDeclaration.getFatherNameVariable());
+            expectedData.put(3, SangathanVariableDeclaration.getDesignationVariable());
+            expectedData.put(4, SangathanVariableDeclaration.getHasSmartPhoneVariable());
+            expectedData.put(5, SangathanVariableDeclaration.getPhoneNumberVariable());
+            expectedData.put(6, SangathanVariableDeclaration.getPrimaryMemberIdVariable());
+
+
+            // Compare actual data with expected data using assertions
+            for (Map.Entry<Integer, String> entry : expectedData.entrySet()) {
+                columnIndex = entry.getKey();
+                String expectedValue = entry.getValue();
+                String actualValue = rowData.get(columnIndex);
+
+                Assert.assertEquals(actualValue, expectedValue);
+            }
+        } else {
+            System.out.println("No rows found in the table.");
+        }
+
 
     }
 
@@ -822,50 +857,44 @@ public class WardKaryakarta {
         Thread.sleep(5000);
         WebElement data_entryDynamicTableEle = sangathanPageObjects.getData_EntryDynamicTableEle();
         js = (JavascriptExecutor) driver;
+        WaitUtils.waitForElementToBeVisible(driver, data_entryDynamicTableEle);
         js.executeScript("arguments[0].scrollIntoView(true);", data_entryDynamicTableEle);
-        get_Karyakarta_Data_To_Edit(phoneNumber);
+        get_Karyakarta_Data_To_Edit(SangathanVariableDeclaration.getPhoneNumberVariable());
     }
 
     @And("^user verify primary details in the data entry form$")
     public void user_verify_primary_details_in_the_data_entry_form() throws InterruptedException {
         js = (JavascriptExecutor) driver;
         // Name
-        copiedEnteredName = driver.findElement(By.xpath("//input[@placeholder='Name']")).getAttribute("value");
-        Assert.assertEquals(copiedEnteredName.toUpperCase(), name.toUpperCase());
+        SangathanVariableDeclaration.setCopiedName(FormControlKaryakarta.getEnteredName());
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedName().toUpperCase(), SangathanVariableDeclaration.getNameVariable().toUpperCase());
 
         // Father's/Husband's Name
-        copiedEnteredFather_Husband_Name = driver.findElement(By.xpath("//input[contains(@placeholder, 'Father')]"))
-                .getAttribute("value");
-        Assert.assertEquals(fatherName.toUpperCase(), copiedEnteredFather_Husband_Name.toUpperCase());
+        SangathanVariableDeclaration.setCopiedFatherName(FormControlKaryakarta.getEnteredRelationName());
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedFatherName().toUpperCase(), SangathanVariableDeclaration.getFatherNameVariable().toUpperCase());
 
         // Designation
-        WebElement SelectDesignationEle = driver.findElement(By.xpath("//div[contains(text(),'Select Designation')]"));
-        copiedSelectedDesignation = driver.findElement(with(By.className("ng-value-label")).below(SelectDesignationEle))
-                .getText();
-        Assert.assertEquals(copiedSelectedDesignation, designation);
+        SangathanVariableDeclaration.setCopiedDesignation(FormControlKaryakarta.getSelectedDesignation());
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedDesignation(), SangathanVariableDeclaration.getDesignationVariable());
 
         // Has SmartPhone
-        WebElement hasSmartPhoneEle = driver.findElement(By.xpath("//div[contains(text(),'Has Smartphone')]"));
-        copiedHasSmartPhone = driver.findElement(with(By.className("ng-value-label")).below(hasSmartPhoneEle))
-                .getText();
-        Assert.assertEquals(copiedHasSmartPhone, hasSmartPhone);
+        SangathanVariableDeclaration.setCopiedHasSmartPhone(FormControlKaryakarta.getSelectedHasSmartPhone());
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedHasSmartPhone(), SangathanVariableDeclaration.getHasSmartPhoneVariable());
 
         // Phone Number
-        copiedPhoneNo = driver.findElement(By.xpath("//input[@placeholder='Phone Number']")).getAttribute("value");
-        Assert.assertEquals(copiedPhoneNo, phoneNumber);
+        SangathanVariableDeclaration.setCopiedPhoneNumber(FormControlKaryakarta.getEnteredPhoneNumber());
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedPhoneNumber(), SangathanVariableDeclaration.getPhoneNumberVariable());
 
         // Primary Member
-        copiedPrimaryMember = driver.findElement(By.xpath("//input[@placeholder='Primary Member Id']"))
-                .getAttribute("value");
-        Assert.assertEquals(copiedPrimaryMember, primaryMemberId);
+        SangathanVariableDeclaration.setCopiedPrimaryMemberId(FormControlKaryakarta.getEnteredPrimaryMemberId());
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedPrimaryMemberId(), SangathanVariableDeclaration.getPrimaryMemberIdVariable());
 
         // Age
-        copiedAge = driver.findElement(By.xpath("//input[@placeholder='Age']")).getAttribute("value");
-        Assert.assertEquals(copiedAge, age);
+        SangathanVariableDeclaration.setCopiedAge(FormControlKaryakarta.getEnteredAge());
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedAge(), SangathanVariableDeclaration.getAgeVariable());
 
         // click on cancel button
-        WebElement cancelButtonEle = driver.findElement(By.xpath("//span[contains(.,'Cancel')]"));
-        js.executeScript("arguments[0].click();", cancelButtonEle);
+        FormControlKaryakarta.clickOnCancelButtonEle();
 
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
         Thread.sleep(2000);
@@ -877,40 +906,48 @@ public class WardKaryakarta {
         // get all the added data.
         user_clicks_on_enter_more_details();
 
-        // Name
-        copiedEnteredName = driver.findElement(By.xpath("//input[@placeholder='Name']")).getAttribute("value");
-        Assert.assertEquals(copiedEnteredName.toUpperCase(), name.toUpperCase());
+        while (FormControlKaryakarta.getEnteredName() == null) {
+
+            WebElement data_entryDynamicTableEle = sangathanPageObjects.getData_EntryDynamicTableEle();
+            js.executeScript("arguments[0].scrollIntoView(true);", data_entryDynamicTableEle);
+            get_Karyakarta_Data_To_Edit(SangathanVariableDeclaration.getPhoneNumberVariable());
+        }
+        // set copied name
+        SangathanVariableDeclaration.setCopiedName(FormControlKaryakarta.getEnteredName());
+        //verifying copied name and entered name
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedName().toUpperCase(), SangathanVariableDeclaration.getNameVariable().toUpperCase());
 
         // Father's/Husband's Name
-        copiedEnteredFather_Husband_Name = driver.findElement(By.xpath("//input[contains(@placeholder, 'Father')]"))
-                .getAttribute("value");
-        Assert.assertEquals(fatherName.toUpperCase(), copiedEnteredFather_Husband_Name.toUpperCase());
+        SangathanVariableDeclaration.setCopiedFatherName(FormControlKaryakarta.getEnteredRelationName());
+        //Verifying copied father name and father name
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedFatherName().toUpperCase(), SangathanVariableDeclaration.getFatherNameVariable().toUpperCase());
 
         // Designation
         WebElement SelectDesignationEle = driver.findElement(By.xpath("//div[contains(text(),'Select Designation')]"));
         copiedSelectedDesignation = driver.findElement(with(By.className("ng-value-label")).below(SelectDesignationEle))
                 .getText();
-        Assert.assertEquals(copiedSelectedDesignation, designation);
+        Assert.assertEquals(copiedSelectedDesignation, SangathanVariableDeclaration.getDesignationVariable());
 
         // Has SmartPhone
         WebElement hasSmartPhoneEle = driver.findElement(By.xpath("//div[contains(text(),'Has Smartphone')]"));
         copiedHasSmartPhone = driver.findElement(with(By.className("ng-value-label")).below(hasSmartPhoneEle))
                 .getText();
-        Assert.assertEquals(copiedHasSmartPhone, hasSmartPhone);
+        Assert.assertEquals(copiedHasSmartPhone, SangathanVariableDeclaration.getHasSmartPhoneVariable());
 
-        // Phone Number
-        copiedPhoneNo = driver.findElement(By.xpath("//input[@placeholder='Phone Number']")).getAttribute("value");
-        Assert.assertEquals(copiedPhoneNo, phoneNumber);
+        // set copied Phone Number
+        SangathanVariableDeclaration.setCopiedPhoneNumber(FormControlKaryakarta.getEnteredPhoneNumber());
+        // Verifying copied and entered phone number
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedPhoneNumber(), SangathanVariableDeclaration.getPhoneNumberVariable());
 
-        // Primary Member
-        copiedPrimaryMember = driver.findElement(By.xpath("//input[@placeholder='Primary Member Id']"))
-                .getAttribute("value");
-        Assert.assertEquals(copiedPrimaryMember, primaryMemberId);
+        // set copied Primary Member
+        SangathanVariableDeclaration.setCopiedPrimaryMemberId(FormControlKaryakarta.getEnteredPrimaryMemberId());
+        //Verifying the copied primary member id and entered primary member id
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedPrimaryMemberId(), SangathanVariableDeclaration.getPrimaryMemberIdVariable());
 
         // Age
         copiedAge = driver.findElement(By.xpath("//input[@placeholder='Age']")).getAttribute("value");
-        Assert.assertEquals(copiedAge, age);
-        int ageInt = Integer.parseInt(age);
+        Assert.assertEquals(copiedAge, SangathanVariableDeclaration.getAgeVariable());
+        int ageInt = Integer.parseInt(SangathanVariableDeclaration.getAgeVariable());
         // Dob
         WebElement dobEle = driver.findElement(By.xpath("//input[@data-placeholder='Dob']"));
         String day_and_month_updated_dob = set_day_and_month_in_dob(ageInt);
@@ -919,98 +956,97 @@ public class WardKaryakarta {
         Assert.assertEquals(day_and_month_updated_dob, copiedDob);
 
         // Blood Group
-        WebElement BloodGroupEle = driver.findElement(By.xpath("//input[@data-placeholder='Blood Group']"));
-        copiedBloodGroup = BloodGroupEle.getAttribute("value");
-        Assert.assertEquals(copiedBloodGroup, bloodGroup);
+        SangathanVariableDeclaration.setCopiedBloodGroup(FormControlKaryakarta.getEnteredBloodGroup());
+        // Verifying the copied blood group and entered blood group
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedBloodGroup(), SangathanVariableDeclaration.getBloodGroupVariable());
 
         // Gender
-        String genderFormating = gender.toLowerCase();
-        if (genderFormating.equals("other")) {
-            genderFormating = genderFormating + "s";
-        }
-        System.out.println("genderFormating :" + genderFormating);
-
-        String classOfselectedGender = driver
-                .findElement(By.xpath("//mat-radio-button[@value='" + genderFormating + "']")).getAttribute("class");
-        System.out.println("classOfselectedGender :" + classOfselectedGender);
+        String classOfselectedGender = FormControlKaryakarta.getSelectedGender(SangathanVariableDeclaration.getGenderVariable());
+        // verifying the gender is selected
         Assert.assertEquals(classOfselectedGender.contains("mat-radio-checked"), true,
                 "seems like gender is not selected");
 
         // WhatsApp
-        copiedWhatsAppNumber = driver.findElement(By.xpath("//input[@placeholder='WhatsApp Number']"))
-                .getAttribute("value");
-        Assert.assertEquals(copiedWhatsAppNumber, whatsApp);
+        SangathanVariableDeclaration.setCopiedWhatsApp(FormControlKaryakarta.getEnteredWhatsAppNumber());
+        //Verifying the copied whatsapp number and entered whatsapp number
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedWhatsApp(), SangathanVariableDeclaration.getWhatsAppVarible());
 
-        // STD Code
-        copiedStdCode = driver.findElement(By.xpath("//input[@placeholder='STD Code']")).getAttribute("value");
-        Assert.assertEquals(copiedStdCode, stdCode);
+        // set copied STD Code
+        FormControlKaryakarta.scrollToViewSTDCode();
+        SangathanVariableDeclaration.setCopiedStdCode(FormControlKaryakarta.getEnteredSTDCode());
+        // verifying the copied std code and entered std code
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedStdCode(), SangathanVariableDeclaration.getStdCodeVariable());
 
-        // Landline Number
-        copiedLandLineNo = driver.findElement(By.xpath("//input[@placeholder='Landline Number']"))
-                .getAttribute("value");
-        Assert.assertEquals(copiedLandLineNo, landlineNumber);
+        // set copied Landline Number
+        SangathanVariableDeclaration.setCopiedLandlineNumber(FormControlKaryakarta.getEnteredLandlineNumber());
+        //Verify copied landline number and entered landline number
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedLandlineNumber(), SangathanVariableDeclaration.getLandlineNumberVariable());
 
         // Select Category
         WebElement SelectCategoryEle = driver.findElement(By.xpath("//div[contains(text(),'Select Category')]"));
         js.executeScript("arguments[0].scrollIntoView(true);", SelectCategoryEle);
         copiedSelectedCategory = driver.findElement(with(By.className("ng-value-label")).below(SelectCategoryEle))
                 .getText();
-        Assert.assertEquals(copiedSelectedCategory, category);
+        Assert.assertEquals(copiedSelectedCategory, SangathanVariableDeclaration.getCategoryVariable());
 
         // Caste
         WebElement SelectCasteEle = driver.findElement(By.xpath("//div[contains(text(),'Caste')]"));
         copiedSelectedCaste = driver.findElement(with(By.className("ng-value-label")).below(SelectCasteEle)).getText();
-        Assert.assertEquals(copiedSelectedCaste, caste);
+        Assert.assertEquals(copiedSelectedCaste, SangathanVariableDeclaration.getCasteVariable());
 
-        // Email
-        copiedEmail = driver.findElement(By.xpath("//input[@placeholder='Email']")).getAttribute("value");
-        Assert.assertEquals(copiedEmail, email);
+        // set copied Email
+        SangathanVariableDeclaration.setCopiedEmail(FormControlKaryakarta.getEnteredEmail());
+        //verify copied email and entered email
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedEmail(), SangathanVariableDeclaration.getEmailVariable());
 
         // Full Address
-        copiedFullAddress = driver.findElement(By.xpath("//input[@placeholder='Full Address']")).getAttribute("value");
-        Assert.assertEquals(copiedFullAddress, fullAddress);
+        SangathanVariableDeclaration.setCopiedFullAddress(FormControlKaryakarta.getEnteredFullAddress());
+        //Verifying copied full address and entered full address
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedFullAddress(), SangathanVariableDeclaration.getFullAddressVariable());
 
         // Village
-        copiedVillage = driver.findElement(By.xpath("//input[@placeholder='Village/Ward']")).getAttribute("value");
-        Assert.assertEquals(copiedVillage, village);
+        SangathanVariableDeclaration.setCopiedVillage(FormControlKaryakarta.getEnteredVillage());
+        //Verifying the copied village and entered village
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedVillage(), SangathanVariableDeclaration.getVillageVariable());
 
-        // Taluka/Tehsil
-        copiedTaluka_Tehsil = driver.findElement(By.xpath("//input[contains(@placeholder, 'Taluka')]"))
-                .getAttribute("value");
-        Assert.assertEquals(copiedTaluka_Tehsil, taluka);
+        // set copied Taluka/Tehsil
+        SangathanVariableDeclaration.setCopiedTaluka(FormControlKaryakarta.getEnteredTaluka());
+        //Verifying the copied taluka and updated taluka
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedTaluka(), SangathanVariableDeclaration.getTalukaVariable());
 
         // select district
         WebElement SelectDistrictEle = driver.findElement(By.xpath("//div[contains(text(),'Select District')]"));
         js.executeScript("arguments[0].scrollIntoView(true);", SelectDistrictEle);
         copiedSelectedDistrict = driver.findElement(with(By.className("ng-value-label")).below(SelectDistrictEle))
                 .getText();
-        Assert.assertEquals(copiedSelectedDistrict, district);
+        Assert.assertEquals(copiedSelectedDistrict, SangathanVariableDeclaration.getDistrictVariable());
 
-        // Pin Code
-        CopiedpinCode = driver.findElement(By.xpath("//input[@placeholder='Pin Code']")).getAttribute("value");
-        Assert.assertEquals(CopiedpinCode, pinCode);
+        //  set copied Pin Code
+        SangathanVariableDeclaration.setCopiedPinCode(FormControlKaryakarta.getEnteredPinCode());
+        // verifying the copied pin-code and entered pin-code
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedPinCode(), SangathanVariableDeclaration.getPinCodeVariable());
 
         // Select Education
         WebElement SelectEducationEle = driver.findElement(By.xpath("//div[contains(text(),'Select Education')]"));
         copiedSelectedEducation = driver.findElement(with(By.className("ng-value-label")).below(SelectEducationEle))
                 .getText();
-        Assert.assertEquals(copiedSelectedEducation, education);
+        Assert.assertEquals(copiedSelectedEducation, SangathanVariableDeclaration.getEducationVariable());
 
         // Select Profession
         WebElement SelectProfessionEle = driver.findElement(By.xpath("//div[contains(text(),'Select Profession')]"));
         copiedSelectedProfession = driver.findElement(with(By.className("ng-value-label")).below(SelectProfessionEle))
                 .getText();
-        Assert.assertEquals(copiedSelectedProfession, profession);
+        Assert.assertEquals(copiedSelectedProfession, SangathanVariableDeclaration.getProfessionVariable());
 
         // hasBike
         WebElement HasBikeEle = driver.findElement(By.xpath("//div[contains(text(),'Bike')]"));
         copiedHasBike = driver.findElement(with(By.className("ng-value-label")).below(HasBikeEle)).getText();
-        Assert.assertEquals(copiedHasBike, bike);
+        Assert.assertEquals(copiedHasBike, SangathanVariableDeclaration.getBikeVariable());
 
         // hasCar
         WebElement HasCarEle = driver.findElement(By.xpath("//div[contains(text(),'Car')]"));
         copiedHasCar = driver.findElement(with(By.className("ng-value-label")).below(HasCarEle)).getText();
-        Assert.assertEquals(copiedHasCar, car);
+        Assert.assertEquals(copiedHasCar, SangathanVariableDeclaration.getCarVariable());
 
         // vidhanSabha where he/she votes
         WebElement vidhanSabha_where_he_sheVotesEle = driver
@@ -1021,91 +1057,89 @@ public class WardKaryakarta {
         // separating number and "-" from copied_vidhanSabha_where_he_sheVotes
         // String[] vidhansabhaNameArr =
         // copied_vidhanSabha_where_he_sheVotes.split("-");
-        Assert.assertEquals(copied_vidhanSabha_where_he_sheVotes, vidhanSabhaWhereHeSheVotes);
+        Assert.assertEquals(copied_vidhanSabha_where_he_sheVotes, SangathanVariableDeclaration.getVidhanSabhaWhereHeSheVotesVariable());
 
         // Booth where He/She Votes
-        copiedBothWhereHeSheVotes = driver
-                .findElement(By.xpath("//input[contains(@placeholder, 'Booth where He/She Votes')]"))
-                .getAttribute("value");
-        Assert.assertEquals(copiedBothWhereHeSheVotes, boothWhereHeSheVotes);
+        SangathanVariableDeclaration.setCopiedBoothWhereHeSheVotes(FormControlKaryakarta.getEnteredBoothWhereHeSheVotes());
+        // verifying copied booth-where-he-she-votes and entered booth-where-he-she-votes
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedBoothWhereHeSheVotes(), SangathanVariableDeclaration.getBoothWhereHeSheVotesVariable());
 
         // Voter Id
         copiedVoterId = driver.findElement(By.xpath("//input[contains(@placeholder, 'ex. UTC026351')]"))
                 .getAttribute("value");
-        Assert.assertEquals(copiedVoterId, voterId);
+        Assert.assertEquals(copiedVoterId, SangathanVariableDeclaration.getVoterIdVariable());
 
         // Aadhaar Number
-        copiedAadhaarNumber = driver.findElement(By.xpath("//input[contains(@placeholder, 'ex. 765478961243')]"))
-                .getAttribute("value");
-        Assert.assertEquals(copiedAadhaarNumber, aadharNumber);
+        SangathanVariableDeclaration.setCopiedAadharNumber(FormControlKaryakarta.getEnteredAadharNumber());
+        // verifying copied Aadhaar Number and entered Aadhaar Number
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedAadharNumber(), SangathanVariableDeclaration.getAadharNumberVariable());
 
         // Panna Number
-        copiedPannaNumber = driver.findElement(By.xpath("//input[contains(@placeholder, 'Panna Number')]"))
-                .getAttribute("value");
-        Assert.assertEquals(copiedPannaNumber, pannaNumber);
+        SangathanVariableDeclaration.setCopiedPannaNumber(FormControlKaryakarta.getEnteredPannaNumber());
+        // verifying copied panna number and entered panna number
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedPannaNumber(), SangathanVariableDeclaration.getPannaNumberVariable());
 
         // Ration Card
-        copiedRationCard = driver.findElement(By.xpath("//input[contains(@placeholder, 'Ration Card Number')]"))
-                .getAttribute("value");
-        Assert.assertEquals(copiedRationCard, rationCardNumber);
+        SangathanVariableDeclaration.setCopiedRationCardNumber(FormControlKaryakarta.getEnteredRationCardNumber());
+        // verifying the copied ration card and entered ration card
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedRationCardNumber(), SangathanVariableDeclaration.getRationCardNumberVariable());
 
         // Facebook
-        copiedFacebookValue = driver.findElement(By.xpath("//input[contains(@placeholder, 'www.fb.com/username')]"))
-                .getAttribute("value");
-        Assert.assertEquals(copiedFacebookValue, facebookProfile);
+        SangathanVariableDeclaration.setCopiedFacebookProfile(FormControlKaryakarta.getEnteredFacebookProfile());
+        // verifying the copied facebook profile and entered facebook profile
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedFacebookProfile(), SangathanVariableDeclaration.getFacebookProfileVariable());
 
         // TwitterProfile
-        copiedTwitterProfile = driver
-                .findElement(By.xpath("//input[contains(@placeholder, 'www.twitter.com/username')]"))
-                .getAttribute("value");
-        Assert.assertEquals(copiedTwitterProfile, twitterProfile);
+        SangathanVariableDeclaration.setCopiedTwitterProfile(FormControlKaryakarta.getEnteredTwitterProfile());
+        // verifying the copied Twitter profile and entered Twitter profile
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedTwitterProfile(), SangathanVariableDeclaration.getTwitterProfileVariable());
 
         // InstagramProfile
-        copiedInstagramProfile = driver
-                .findElement(By.xpath("//input[contains(@placeholder, 'www.instagram.com/username')]"))
-                .getAttribute("value");
-        Assert.assertEquals(copiedInstagramProfile, instagramProfile);
+        SangathanVariableDeclaration.setCopiedInstagramProfile(FormControlKaryakarta.getEnteredInstagramProfile());
+        // verifying the copied instagram and entered instagram profile
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedInstagramProfile(), SangathanVariableDeclaration.getInstagramProfileVariable());
 
         // LinkedInProfile
-        copiedLinkedInProfile = driver
-                .findElement(By.xpath("//input[contains(@placeholder, 'www.linkedin.com/username')]"))
-                .getAttribute("value");
-        Assert.assertEquals(copiedLinkedInProfile, linkedinProfile);
+        SangathanVariableDeclaration.setCopiedLinkedinProfile(FormControlKaryakarta.getEnteredLinkedinProfile());
+        // verifying the copied linked in and entered linked in profile
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedLinkedinProfile(), SangathanVariableDeclaration.getLinkedinProfileVariable());
 
         // Salutation
         copiedSalutation = driver.findElements(By.className("mat-select-value-text")).get(0).getText();
-        Assert.assertEquals(copiedSalutation, salutation);
+        Assert.assertEquals(copiedSalutation, SangathanVariableDeclaration.getSalutationVariable());
 
         // Sub Caste
-        copiedSubCaste = driver.findElement(By.xpath("//input[contains(@placeholder, 'Sub caste')]"))
-                .getAttribute("value");
-        Assert.assertEquals(copiedSubCaste, subCaste);
+        SangathanVariableDeclaration.setCopiedSubCaste(FormControlKaryakarta.getEnteredSubCaste());
+        // verifying the copied sub caste and entered sub caste
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedSubCaste(), SangathanVariableDeclaration.getSubCasteVariable());
 
         // Qualification
-        copiedQualification = driver.findElement(By.xpath("//input[contains(@placeholder, 'Qualification')]"))
-                .getAttribute("value");
-        Assert.assertEquals(copiedQualification, qualification);
+        SangathanVariableDeclaration.setCopiedQualification(FormControlKaryakarta.getEnteredQualification());
+        // verifying the copied qualification and entered qualification
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedQualification(), SangathanVariableDeclaration.getQualificationVariable());
 
         // Religion
         copiedReligion = driver.findElements(By.className("mat-select-value-text")).get(1).getText();
-        Assert.assertEquals(copiedReligion, religion);
+        Assert.assertEquals(copiedReligion, SangathanVariableDeclaration.getReligionVariable());
 
         // Active Member Id
-        copiedActiveMemberId = driver.findElement(By.xpath("//input[contains(@placeholder, 'Active Member Id')]"))
-                .getAttribute("value");
-        Assert.assertEquals(copiedActiveMemberId, activeMemberId);
+        SangathanVariableDeclaration.setCopiedActiveMemberId(FormControlKaryakarta.getEnteredActiveMemberId());
+        // verifying the copied active member id and entered active member id
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedActiveMemberId(), SangathanVariableDeclaration.getActiveMemberIdVariable());
 
         // Select Party Zila Id
-        WebElement SelectPartyZilaIdEle = driver.findElement(By.xpath("//div[contains(text(),'Select Party Zila')]"));
-        copiedSelectedPartyZilaId = driver.findElement(with(By.className("ng-value-label")).below(SelectPartyZilaIdEle))
-                .getText();
-        Assert.assertEquals(copiedSelectedPartyZilaId, partyZila);
+//        WebElement SelectPartyZilaIdEle = driver.findElement(By.xpath("//div[contains(text(),'Select Party Zila')]"));
+//        copiedSelectedPartyZilaId = driver.findElement(with(By.className("ng-value-label")).below(SelectPartyZilaIdEle))
+//                .getText();
+        SangathanVariableDeclaration.setCopiedPartyZila(FormControlKaryakarta.getSelectedPartyZila());
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedPartyZila(), SangathanVariableDeclaration.getPartyZilaVariable());
 
         // Select Party Mandal
-        WebElement SelectPartyMandalEle = driver.findElement(By.xpath("//div[contains(text(),'Select Party Mandal')]"));
-        copiedSelectedPartyMandalId = driver
-                .findElement(with(By.className("ng-value-label")).below(SelectPartyMandalEle)).getText();
-        Assert.assertEquals(copiedSelectedPartyMandalId, partyMandal);
+//        WebElement SelectPartyMandalEle = driver.findElement(By.xpath("//div[contains(text(),'Select Party Mandal')]"));
+//        copiedSelectedPartyMandalId = driver
+//                .findElement(with(By.className("ng-value-label")).below(SelectPartyMandalEle)).getText();
+        SangathanVariableDeclaration.setCopiedPartyMandal(FormControlKaryakarta.getSelectedPartyMandal());
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedPartyMandal(), SangathanVariableDeclaration.getPartyMandalVariable());
 
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
         Thread.sleep(2000);
@@ -1130,19 +1164,20 @@ public class WardKaryakarta {
 
         // primary fields
         // Name
-        FormControlKaryakarta.enterName(name);
+        FormControlKaryakarta.enterName(SangathanVariableDeclaration.getNameVariable());
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
 
         // Father and Husband Name
-        FormControlKaryakarta.enterRelationName(fatherName);
+        FormControlKaryakarta.enterRelationName(SangathanVariableDeclaration.getFatherNameVariable());
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
 
         // Designation
+       // FormControlKaryakarta.clearDesignation();
         FormControlKaryakarta.clickOnDesignation();
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
 
         // Select Designation
-        FormControlKaryakarta.selectDesignation(designation);
+        FormControlKaryakarta.selectDesignation(SangathanVariableDeclaration.getDesignationVariable());
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
 
         // phone number
@@ -1151,19 +1186,14 @@ public class WardKaryakarta {
 
         user_click_on_add_button();
 
-        // if person with duplicate phone number exists on same unit and sub unit and on
-        // same location.
-        WebElement dialogForDuplicatePerson = driver.findElement(By.xpath("//mat-dialog-container"));
-        wait.until(ExpectedConditions.visibilityOf(dialogForDuplicatePerson));
-        WebElement textInDialogEle = driver
-                .findElement(By.xpath("//mat-dialog-container//div[@class='mat-dialog-title']"));
-        String textInDialog = textInDialogEle.getText();
+        // if person with duplicate phone number exists on same unit and sub unit and on same location.
+        wait.until(ExpectedConditions.visibilityOf(sangathanPageObjects.get_data_entry_dialogue_ele()));
+
         Assert.assertEquals(
                 "We can not create an entry with given details because a person can not hold two designations at the same organizational level & unit.",
-                textInDialog);
+                FormControlKaryakarta.getTextFromDataEntryDialogue());
 
-        WebElement cancelDialogButtonEle = driver.findElement(By.xpath("//span[contains(.,'Cancel')]"));
-        js.executeScript("arguments[0].click();", cancelDialogButtonEle);
+        FormControlKaryakarta.clickOnCancelButtonInDataEntryDialogue();
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
 
     }
@@ -1181,19 +1211,20 @@ public class WardKaryakarta {
 
         // primary fields
         // Name
-        FormControlKaryakarta.enterName(name);
+        FormControlKaryakarta.enterName(SangathanVariableDeclaration.getNameVariable());
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
 
         // Father and Husband Name
-        FormControlKaryakarta.enterRelationName(fatherName);
+        FormControlKaryakarta.enterRelationName(SangathanVariableDeclaration.getFatherNameVariable());
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
 
         // Designation
+        FormControlKaryakarta.clearDesignation();
         FormControlKaryakarta.clickOnDesignation();
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
 
         // Select Designation
-        FormControlKaryakarta.selectDesignation(designation);
+        FormControlKaryakarta.selectDesignation(SangathanVariableDeclaration.getDesignationVariable());
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
 
         // phone number
@@ -1202,16 +1233,13 @@ public class WardKaryakarta {
 
         user_click_on_add_button();
         // if user exists on different data level unit and sub unit
-        WebElement dialogForDuplicatePerson = driver.findElement(By.xpath("//mat-dialog-container"));
-        wait.until(ExpectedConditions.visibilityOf(dialogForDuplicatePerson));
-        WebElement textInDialogEle = driver
-                .findElement(By.xpath("//mat-dialog-container//div[@class='mat-dialog-title']"));
-        String textInDialog = textInDialogEle.getText();
-        System.out.println("textInDialog:" + textInDialog);
-        // Assert.assertEquals(false, textInDialog);
+        wait.until(ExpectedConditions.visibilityOf(sangathanPageObjects.get_data_entry_dialogue_ele()));
+
+        System.out.println("textInDialog:" + FormControlKaryakarta.getTextFromDataEntryDialogue());
+        Assert.assertEquals(FormControlKaryakarta.getTextFromDataEntryDialogue(), "From Pradesh to Mandal, Karyakarta can only hold only one designation. प्रदेश से मंडल स्तर तक पदाधिकारी को एक ही पद प्रदान किया जा सकता है।");
+
         // cancel dialog
-        WebElement cancelDialogButtonEle = driver.findElement(By.xpath("//span[contains(.,'Cancel')]"));
-        js.executeScript("arguments[0].click();", cancelDialogButtonEle);
+        FormControlKaryakarta.clickOnCancelButtonInDataEntryDialogue();
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
 
     }
@@ -1225,61 +1253,62 @@ public class WardKaryakarta {
         Map<String, String> map = Karyakarta_Primary_Edit_Details.asMap(String.class, String.class);
 
         // get data from feature files
-        updatedName = map.get("Name");
-        updatedFatherName = map.get("Father Name");
-        updatedDesignation = map.get("Designation");
-        updatedHasSmartPhone = map.get("Has Smartphone");
-        updatedPhoneNumber = map.get("Phone Number");
-        updatedPrimaryMemberId = map.get("Primary Member ID");
-        updatedAge = map.get("Age");
+        //updatedName
+        SangathanVariableDeclaration.setUpdatedName(map.get("Name"));
+        //updatedFatherName
+        SangathanVariableDeclaration.setUpdatedFatherName(map.get("Father Name"));
+        //updatedDesignation
+        SangathanVariableDeclaration.setUpdatedDesignation(map.get("Designation"));
+        //updatedHasSmartPhone
+        SangathanVariableDeclaration.setUpdatedHasSmartPhone(map.get("Has Smartphone"));
+        //updatedPhoneNumber
+        SangathanVariableDeclaration.setUpdatedPhoneNumber(map.get("Phone Number"));
+        //updatedPrimaryMemberId
+        SangathanVariableDeclaration.setUpdatedPrimaryMemberId(map.get("Primary Member ID"));
+        //updatedAge
+        SangathanVariableDeclaration.setUpdatedAge(map.get("Age"));
 
         // Karyakarta_Edit_Details fill into the dynamic form
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        Thread.sleep(2000);
-        // click on edit button for person which need to edit
-        get_Karyakarta_Data_To_Edit(phoneNumber);
+        sangathanPageObjects = new SangathanPageObjects(driver);
+        ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
+        Thread.sleep(5000);
+        WebElement data_entryDynamicTableEle = sangathanPageObjects.getData_EntryDynamicTableEle();
+        js = (JavascriptExecutor) driver;
+        js.executeScript("arguments[0].scrollIntoView(true);", data_entryDynamicTableEle);
+        get_Karyakarta_Data_To_Edit(SangathanVariableDeclaration.getPhoneNumberVariable());
 
         Thread.sleep(1000);
 
         // Name
-        WebElement nameEle = wait
-                .until(ExpectedConditions.elementToBeClickable(By.xpath("//input[@placeholder='Name']")));
-        nameEle.sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-
-        nameEle.sendKeys(updatedName);
+        FormControlKaryakarta.clearName();
+        FormControlKaryakarta.enterName(SangathanVariableDeclaration.getUpdatedName());
 
         // Father's/Husband's Name
-        WebElement fatherEle = driver.findElement(By.xpath("//input[contains(@placeholder, 'Father')]"));
-        fatherEle.sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-        fatherEle.sendKeys(updatedFatherName);
+        FormControlKaryakarta.clearRelationName();
+        FormControlKaryakarta.enterRelationName(SangathanVariableDeclaration.getUpdatedFatherName());
 
         // select Designation
-        driver.findElement(By.xpath("//div[contains(text(),'Select Designation')]")).click();
-        WebElement selectDesignationNameEle = driver.findElement(
-                By.xpath("//div[contains(@class,'ng-option')]//span[contains(text(),'" + updatedDesignation + "')]"));
-        js.executeScript("arguments[0].click();", selectDesignationNameEle);
+        FormControlKaryakarta.clearDesignation();
+        FormControlKaryakarta.clickOnDesignation();
+        FormControlKaryakarta.selectDesignation(SangathanVariableDeclaration.getUpdatedDesignation());
 
-        // Has SmartPhone
-        driver.findElement(By.xpath("//*[contains(text(),'Has Smartphone')]")).click();
-        Thread.sleep(1000);
-        driver.findElement(
-                        By.xpath("//div[contains(@class,'ng-option')]//span[contains(text(),'" + updatedHasSmartPhone + "')]"))
-                .click();
+        // hasSmartPhone
+        FormControlKaryakarta.clickOnHasSmartPhone();
+        // select hasSmartPhone
+        FormControlKaryakarta.selectHasSmartPhone(SangathanVariableDeclaration.getUpdatedHasSmartPhone());
 
         // Phone Number
-        WebElement PhoneNumberEle = driver.findElement(By.xpath("//input[@placeholder='Phone Number']"));
-        PhoneNumberEle.sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-        PhoneNumberEle.sendKeys(updatedPhoneNumber);
+        FormControlKaryakarta.clearPhoneNumber();
+        FormControlKaryakarta.enterPhoneNumber(SangathanVariableDeclaration.getUpdatedPhoneNumber());
 
         // Primary Member
-        WebElement PrimaryMemberIdEle = driver.findElement(By.xpath("//input[@placeholder='Primary Member Id']"));
-        PrimaryMemberIdEle.sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-        PrimaryMemberIdEle.sendKeys(updatedPrimaryMemberId);
+        FormControlKaryakarta.clearPrimaryMemberId();
+        FormControlKaryakarta.enterPrimaryMemberId(SangathanVariableDeclaration.getUpdatedPrimaryMemberId());
 
         // Age
-        WebElement AgeEle = driver.findElement(By.xpath("//input[@placeholder='Age']"));
-        AgeEle.sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-        AgeEle.sendKeys(updatedAge);
+        FormControlKaryakarta.clearAge();
+        FormControlKaryakarta.enterAge(SangathanVariableDeclaration.getUpdatedAge());
 
     }
 
@@ -1289,65 +1318,114 @@ public class WardKaryakarta {
         ngDriver = new NgWebDriver((JavascriptExecutor) driver);
         wait = new WebDriverWait(driver, Duration.ofSeconds(110));
         Map<String, String> map = Karyakarta_Edit_Details.asMap(String.class, String.class);
-        updatedName = map.get("Name");
-        updatedFatherName = map.get("Father Name");
-        updatedDesignation = map.get("Designation");
-        updatedHasSmartPhone = map.get("Has Smartphone");
-        updatedPhoneNumber = map.get("Phone Number");
-        updatedPrimaryMemberId = map.get("Primary Member ID");
-        updatedAge = map.get("Age");
-        updatedGender = map.get("Gender");
-        updatedWhatsApp = map.get("WhatsApp Number");
-        updatedStdCode = map.get("STD Code");
-        updatedLandlineNumber = map.get("Landline Number");
-        updatedCategory = map.get("Category");
-        updatedCaste = map.get("Caste");
-        updatedEmail = map.get("Email");
-        updatedDob = map.get("Dob");
-        updatedFullAddress = map.get("Full Address");
-        updatedVillage = map.get("Village");
-        updatedTaluka = map.get("Taluka");
-        updatedDistrict = map.get("District");
-        updatedPinCode = map.get("Pin Code");
-        updatedEducation = map.get("Education");
-        updatedProfession = map.get("Profession");
-        updatedBike = map.get("Bike");
-        updatedCar = map.get("Car");
-        updatedVidhanSabhaWhereHeSheVotes = map.get("Vidhan Sabha where he/she votes");
-        updatedBoothWhereHeSheVotes = map.get("Booth where he/she votes");
+        //updatedName
+        SangathanVariableDeclaration.setUpdatedName(map.get("Name"));
+        //updatedFatherName
+        SangathanVariableDeclaration.setUpdatedFatherName(map.get("Father Name"));
+        //updatedDesignation
+        SangathanVariableDeclaration.setUpdatedDesignation(map.get("Designation"));
+        //updatedHasSmartPhone
+        SangathanVariableDeclaration.setUpdatedHasSmartPhone(map.get("Has Smartphone"));
+        //updatedPhoneNumber
+        SangathanVariableDeclaration.setUpdatedPhoneNumber(map.get("Phone Number"));
+        //updatedPrimaryMemberId
+        SangathanVariableDeclaration.setUpdatedPrimaryMemberId(map.get("Primary Member ID"));
+        //updatedAge
+        SangathanVariableDeclaration.setUpdatedAge(map.get("Age"));
+        //updatedGender
+        SangathanVariableDeclaration.setUpdatedGender(map.get("Gender"));
+        //updatedWhatsApp
+        SangathanVariableDeclaration.setUpdatedWhatsApp(map.get("WhatsApp Number"));
+        //updatedStdCode
+        SangathanVariableDeclaration.setUpdatedStdCode(map.get("STD Code"));
+        //updatedLandlineNumber
+        SangathanVariableDeclaration.setUpdatedLandlineNumber(map.get("Landline Number"));
+        //updatedCategory
+        SangathanVariableDeclaration.setUpdatedCategory(map.get("Category"));
+        //updatedCaste
+        SangathanVariableDeclaration.setUpdatedCaste(map.get("Caste"));
+        //updatedEmail
+        SangathanVariableDeclaration.setUpdatedEmail(map.get("Email"));
+        //updatedDob
+        SangathanVariableDeclaration.setUpdatedDob(map.get("Dob"));
+        //updatedFullAddress
+        SangathanVariableDeclaration.setUpdatedFullAddress(map.get("Full Address"));
+        //updatedVillage
+        SangathanVariableDeclaration.setUpdatedVillage(map.get("Village"));
+        //updatedTaluka
+        SangathanVariableDeclaration.setUpdatedTaluka(map.get("Taluka"));
+        //updatedDistrict = map.get("District");
+        SangathanVariableDeclaration.setUpdatedDistrict(map.get("District"));
+        //updatedPinCode
+        SangathanVariableDeclaration.setUpdatedPinCode(map.get("Pin Code"));
+        //updatedEducation
+        SangathanVariableDeclaration.setUpdatedEducation(map.get("Education"));
+        //updatedProfession
+        SangathanVariableDeclaration.setUpdatedProfession(map.get("Profession"));
+        //updatedBike
+        SangathanVariableDeclaration.setUpdatedBike(map.get("Bike"));
+        //updatedCar
+        SangathanVariableDeclaration.setUpdatedCar(map.get("Car"));
+        //updatedVidhanSabhaWhereHeSheVotes
+        SangathanVariableDeclaration.setUpdatedVidhanSabhaWhereHeSheVotes(map.get("Vidhan Sabha where he/she votes"));
+        //updatedBoothWhereHeSheVotes
+        SangathanVariableDeclaration.setUpdatedBoothWhereHeSheVotes(map.get("Booth where he/she votes"));
         updatedVoterId = map.get("Voter Id");
-        updatedAadharNumber = map.get("Aadhaar Number");
-        updatedPannaNumber = map.get("Panna Number");
-        updatedRationCardNumber = map.get("Ration Card Number");
-        updatedFacebookProfile = map.get("Facebook Profile");
-        updatedTwitterProfile = map.get("Twitter Profile");
-        updatedInstagramProfile = map.get("Intagram Profile");
-        updatedLinkedinProfile = map.get("Linkedin Profile");
-        updatedImage = map.get("Image");
-        updatedSalutation = map.get("Salutation");
-        updatedSubCaste = map.get("Sub Caste");
-        updatedQualification = map.get("Qualification");
-        updatedReligion = map.get("Religion");
-        updatedActiveMemberId = map.get("Active Member Id");
-        updatedPartyZila = map.get("Party Zila");
-        updatedPartyMandal = map.get("Party Mandal");
-        updatedBloodGroup = map.get("Blood Group");
+        SangathanVariableDeclaration.setUpdatedVoterId(map.get("Voter Id"));
+        //updatedAadharNumber
+        SangathanVariableDeclaration.setUpdatedAadharNumber(map.get("Aadhaar Number"));
+        //updatedPannaNumber
+        SangathanVariableDeclaration.setUpdatedPannaNumber(map.get("Panna Number"));
+        //updatedRationCardNumber
+        SangathanVariableDeclaration.setUpdatedRationCardNumber(map.get("Ration Card Number"));
+        //updatedFacebookProfile
+        SangathanVariableDeclaration.setUpdatedFacebookProfile(map.get("Facebook Profile"));
+        //updatedTwitterProfile
+        SangathanVariableDeclaration.setUpdatedTwitterProfile(map.get("Twitter Profile"));
+        //updatedInstagramProfile
+        SangathanVariableDeclaration.setUpdatedInstagramProfile(map.get("Intagram Profile"));
+        //updatedLinkedinProfile
+        SangathanVariableDeclaration.setUpdatedLinkedinProfile(map.get("Linkedin Profile"));
+        //updatedImage
+        SangathanVariableDeclaration.setUpdatedImage(map.get("Image"));
+        //updatedSalutation
+        SangathanVariableDeclaration.setUpdatedSalutation(map.get("Salutation"));
+        //updatedSubCaste
+        SangathanVariableDeclaration.setUpdatedSubCaste(map.get("Sub Caste"));
+        //updatedQualification
+        SangathanVariableDeclaration.setUpdatedQualification(map.get("Qualification"));
+        //updatedReligion
+        SangathanVariableDeclaration.setUpdatedReligion(map.get("Religion"));
+        //updatedActiveMemberId
+        SangathanVariableDeclaration.setUpdatedActiveMemberId(map.get("Active Member Id"));
+        //updatedPartyZila
+        SangathanVariableDeclaration.setUpdatedPartyZila(map.get("Party Zila"));
+        //updatedPartyMandal
+        SangathanVariableDeclaration.setUpdatedPartyMandal(map.get("Party Mandal"));
+        //updatedBloodGroup
+        SangathanVariableDeclaration.setUpdatedBloodGroup(map.get("Blood Group"));
 
-        System.out.println("Name:>>>> " + name);
+        System.out.println("Name:>>>> " + SangathanVariableDeclaration.getNameVariable());
 
         // Karyakarta_Edit_Details fill into the dynamic form
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        Thread.sleep(2000);
-
-        WebElement actionEle = driver.findElements(By.xpath("//mat-icon[contains(.,'more_vert')]")).get(0);
-        WebElement actioneleAfterClickable = wait.until(ExpectedConditions.elementToBeClickable(actionEle));
-        js.executeScript("arguments[0].scrollIntoView(true);", actioneleAfterClickable);
-        Thread.sleep(1000);
-        // click on action from 1st row
-        js.executeScript("arguments[0].click();", actionEle);
-        Thread.sleep(1000);
-        // click on Edit option
-        driver.findElement(By.xpath("//span[contains(.,'Edit')]")).click();
+//
+//        WebElement actionEle = driver.findElements(By.xpath("//mat-icon[contains(.,'more_vert')]")).get(0);
+//        WebElement actioneleAfterClickable = wait.until(ExpectedConditions.elementToBeClickable(actionEle));
+//        js.executeScript("arguments[0].scrollIntoView(true);", actioneleAfterClickable);
+//        Thread.sleep(1000);
+//        // click on action from 1st row
+//        js.executeScript("arguments[0].click();", actionEle);
+//        Thread.sleep(1000);
+//        // click on Edit option
+//        driver.findElement(By.xpath("//span[contains(.,'Edit')]")).click();
+        sangathanPageObjects = new SangathanPageObjects(driver);
+        ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
+        Thread.sleep(5000);
+        WebElement data_entryDynamicTableEle = sangathanPageObjects.getData_EntryDynamicTableEle();
+        js = (JavascriptExecutor) driver;
+        js.executeScript("arguments[0].scrollIntoView(true);", data_entryDynamicTableEle);
+        get_Karyakarta_Data_To_Edit(SangathanVariableDeclaration.getPhoneNumberVariable());
 
         Thread.sleep(1000);
         // ------If you want to enter extra details please use this section.------
@@ -1356,46 +1434,34 @@ public class WardKaryakarta {
         Thread.sleep(1000);
         js.executeScript("arguments[0].click();", extraDetailsEle);
 
-        // Name
-        WebElement nameEle = wait
-                .until(ExpectedConditions.elementToBeClickable(By.xpath("//input[@placeholder='Name']")));
-        nameEle.sendKeys(Keys.CONTROL, "a", Keys.DELETE);
+        //Enter updated name
+        FormControlKaryakarta.clearName();
+        FormControlKaryakarta.enterName(SangathanVariableDeclaration.getUpdatedName());
 
-        nameEle.sendKeys(updatedName);
+        // Enter updated father name
+        FormControlKaryakarta.clearRelationName();
+        FormControlKaryakarta.enterRelationName(SangathanVariableDeclaration.getUpdatedFatherName());
 
-        // Father's/Husband's Name
-        WebElement fatherEle = driver.findElement(By.xpath("//input[contains(@placeholder, 'Father')]"));
-        fatherEle.sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-        fatherEle.sendKeys(updatedFatherName);
+        // select updated Designation
+        FormControlKaryakarta.clearDesignation();
+        FormControlKaryakarta.clickOnDesignation();
+        FormControlKaryakarta.selectDesignation(SangathanVariableDeclaration.getUpdatedDesignation());
 
-        // select Designation
-        driver.findElement(By.xpath("//div[contains(text(),'Select Designation')]")).click();
-        WebElement selectDesignationNameEle = driver.findElement(
-                By.xpath("//div[contains(@class,'ng-option')]//span[contains(text(),'" + updatedDesignation + "')]"));
-        js.executeScript("arguments[0].click();", selectDesignationNameEle);
-
-        // Has SmartPhone
-        driver.findElement(By.xpath("//*[contains(text(),'Has Smartphone')]")).click();
-        Thread.sleep(1000);
-        driver.findElement(
-                        By.xpath("//div[contains(@class,'ng-option')]//span[contains(text(),'" + updatedHasSmartPhone + "')]"))
-                .click();
+        // selected Updated Has SmartPhone
+        //FormControlKaryakarta.clickOnHasSmartPhone();
+        //FormControlKaryakarta.selectHasSmartPhone(SangathanVariableDeclaration.getUpdatedHasSmartPhone());
 
         // Phone Number
-        WebElement PhoneNumberEle = driver.findElement(By.xpath("//input[@placeholder='Phone Number']"));
-        PhoneNumberEle.sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-        PhoneNumberEle.sendKeys(updatedPhoneNumber);
+        FormControlKaryakarta.enterPhoneNumber(SangathanVariableDeclaration.getUpdatedPhoneNumber());
 
         // Primary Member
-        WebElement PrimaryMemberIdEle = driver.findElement(By.xpath("//input[@placeholder='Primary Member Id']"));
-        PrimaryMemberIdEle.sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-        PrimaryMemberIdEle.sendKeys(updatedPrimaryMemberId);
+        FormControlKaryakarta.clearPrimaryMemberId();
+        FormControlKaryakarta.enterPrimaryMemberId(SangathanVariableDeclaration.getUpdatedPrimaryMemberId());
 
         // Age
-        WebElement AgeEle = driver.findElement(By.xpath("//input[@placeholder='Age']"));
-        AgeEle.sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-        AgeEle.sendKeys(updatedAge);
-        int ageInt = Integer.parseInt(updatedAge);
+        FormControlKaryakarta.clearAge();
+        FormControlKaryakarta.enterAge(SangathanVariableDeclaration.getUpdatedAge());
+        int ageInt = Integer.parseInt(SangathanVariableDeclaration.getUpdatedAge());
         // Dob
         String calculatedDOB = dob_calculation_based_on_age_input(ageInt);
         WebElement dobEle = driver.findElement(By.xpath("//input[@data-placeholder='Dob']"));
@@ -1411,337 +1477,166 @@ public class WardKaryakarta {
         dobEle.sendKeys(day_and_month_updated_dob);
         String copiedDob = dobEle.getAttribute("value");
         Assert.assertEquals(day_and_month_updated_dob, copiedDob);
+
         // Blood Group
-        WebElement bloodGroupEle = driver.findElement(By.xpath("//input[@data-placeholder='Blood Group']"));
-        bloodGroupEle.sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-        bloodGroupEle.sendKeys(updatedBloodGroup);
+        FormControlKaryakarta.clearBloodGroup();
+        FormControlKaryakarta.enterBloodGroup(SangathanVariableDeclaration.getUpdatedBloodGroup());
+
         // select gender
-        String selectGender;
-        if (updatedGender.equals("Male") || updatedGender.equals("Female")) {
-            selectGender = updatedGender.toLowerCase();
-        } else {
-            // make Other to others
-            selectGender = updatedGender.toLowerCase() + "s";
-        }
-        WebElement genderEle = driver.findElement(By.xpath("//input[@value='" + selectGender + "']"));
-        js.executeScript("arguments[0].scrollIntoView(true);", genderEle);
-        Thread.sleep(1000);
-        js.executeScript("arguments[0].click();", genderEle);
+        FormControlKaryakarta.selectGender(SangathanVariableDeclaration.getUpdatedGender());
 
         // WhatsApp Number
-        WebElement whatsAppEle = driver.findElement(By.xpath("//input[@placeholder='WhatsApp Number']"));
-        whatsAppEle.sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-        whatsAppEle.sendKeys(updatedWhatsApp);
+        FormControlKaryakarta.clearWhatsAppNumber();
+        FormControlKaryakarta.enterWhatsAppNumber(SangathanVariableDeclaration.getUpdatedWhatsApp());
 
         // STD Code
-        WebElement stdCodeEle = driver.findElement(By.xpath("//input[@placeholder='STD Code']"));
-        stdCodeEle.sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-        stdCodeEle.sendKeys(updatedStdCode);
+        FormControlKaryakarta.clearSTDCode();
+        FormControlKaryakarta.enterSTDCode(SangathanVariableDeclaration.getUpdatedStdCode());
 
         // Landline Number
-        WebElement stdLandlineEle = driver.findElement(By.xpath("//input[@placeholder='Landline Number']"));
-        stdLandlineEle.sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-        stdLandlineEle.sendKeys(updatedLandlineNumber);
-        // Clear Category
-        WebElement selectCategoryEle = sangathanPageObjects.getSelectCategoryEle();
-        WebElement clearCategory = driver
-                .findElement(with(By.xpath("//span[@title='Clear all']")).toRightOf(selectCategoryEle));
-        clearCategory.click();
+        FormControlKaryakarta.clearLandlineNumber();
+        FormControlKaryakarta.enterLandlineNumber(SangathanVariableDeclaration.getUpdatedLandlineNumber());
 
-        // Caste
-        // WebElement CasteEle = sangathanPageObjects.getSelectCasteEle();
-//        WebElement clearCaste =
-//                driver.findElement(with(By.xpath("//span[@title='Clearall']")).toRightOf(CasteEle));
+        //Clear Category
+        FormControlKaryakarta.clearCategory();
 
-        // click on select Category
-//        selectCategoryEle.get(0).click();
-//        clearCategory.click();
-//        apply_validation_in_category_and_caste();
-//
-//        selectCategoryEle.get(0).click();
-//
-//        // categoryValue = addDatadriven.get(12);
-//        WebElement categoryValueEle = driver
-//                .findElement(By.xpath("//div//span[contains(text(),'" + updatedCategory + "')]"));
-//        js.executeScript("arguments[0].click();", categoryValueEle);
-//        ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-//        // Thread.sleep(2000);
-//
-//        List<WebElement> casteOverlayEle = driver.findElements(By.xpath("//div[@class='overlay ng-star-inserted']"));
-//        while (casteOverlayEle.size() > 0) {
-//            System.out.println("caste Overlay 1 ........");
-//            casteOverlayEle = driver.findElements(By.xpath("//div[@class='overlay ng-star-inserted']"));
-//            Thread.sleep(1000);
-//        }
-//        System.out.println("--------------- overlay gone----------------");
-//        Thread.sleep(2000);
-//
-//        // click on Caste
-//        WebElement CasteEleAfterwait = wait.until(ExpectedConditions.elementToBeClickable(CasteEle.get(0)));
-//        CasteEleAfterwait.click();
-//        WebElement CasteValueEle = driver.findElement(By.xpath("//div//span[contains(text(),'" + updatedCaste + "')]"));
-//        js.executeScript("arguments[0].click();", CasteValueEle);
-
-        // Category and Caste fields handle with validation
-        // Caste
-        WebElement CasteEle = sangathanPageObjects.getSelectCasteEle();
         // Validation in category and caste
         apply_validation_in_category_and_caste();
 
         // click on select Category
         FormControlKaryakarta.clickOnCategory();
-        WebElement categoryValueEle = sangathanPageObjects.getCategoryValueEle(category);
-        ExceptionHandler.clickElementWithRetry(categoryValueEle);
-        ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        Thread.sleep(2000);
+        FormControlKaryakarta.selectCategory(SangathanVariableDeclaration.getUpdatedCategory());
 
         // click on Caste
-        ExceptionHandler.clickElementWithRetry(CasteEle);
+        FormControlKaryakarta.clickOnCaste();
 
         //select caste value
-        WebElement CasteValueEle = sangathanPageObjects.getCasteValueEle(caste);
-        ExceptionHandler.clickElementWithRetry(CasteValueEle);
-
+        FormControlKaryakarta.selectCaste(SangathanVariableDeclaration.getUpdatedCaste());
 
         // Email
-        WebElement emailEle = driver.findElement(By.xpath("//input[@placeholder='Email']"));
-        emailEle.sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-        emailEle.sendKeys(updatedEmail);
+        FormControlKaryakarta.clearEmail();
+        FormControlKaryakarta.enterEmail(SangathanVariableDeclaration.getUpdatedEmail());
 
         // enter full Address
-        WebElement fullAddressEle = driver.findElement(By.xpath("//input[@placeholder='Full Address']"));
-        fullAddressEle.sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-        fullAddressEle.sendKeys(updatedFullAddress);
+        FormControlKaryakarta.clearFullAddress();
+        FormControlKaryakarta.enterFullAddress(SangathanVariableDeclaration.getUpdatedFullAddress());
 
         // Village
-        WebElement villageEle = driver.findElement(By.xpath("//input[@placeholder='Village/Ward']"));
-        villageEle.sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-        villageEle.sendKeys(updatedVillage);
+        FormControlKaryakarta.clearVillage();
+        FormControlKaryakarta.enterVillage(SangathanVariableDeclaration.getUpdatedVillage());
 
         // Taluka/Tehsil
-        WebElement Taluka_Tehsil_Ele = driver.findElement(By.xpath("//input[contains(@placeholder, 'Taluka')]"));
-        Taluka_Tehsil_Ele.sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-        Taluka_Tehsil_Ele.sendKeys(updatedTaluka);
+        FormControlKaryakarta.clearTaluka();
+        FormControlKaryakarta.enterTaluka(SangathanVariableDeclaration.getUpdatedTaluka());
 
         // click on Select District
-        WebElement selectDistrictEle = driver.findElement(By.xpath("//div[contains(text(),'Select District')]"));
-        selectDistrictEle.click();
-        ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        Thread.sleep(2000);
-        WebElement DistrictNameEle = driver.findElement(
-                By.xpath("//div[contains(@class,'ng-option')]//span[contains(text(),'" + updatedDistrict + "')]"));
-        js.executeScript("arguments[0].click();", DistrictNameEle);
+        FormControlKaryakarta.clearDistrict();
+        FormControlKaryakarta.clickOnDistrict();
+        FormControlKaryakarta.selectDistrict(SangathanVariableDeclaration.getUpdatedDistrict());
 
         // pinCode
-        WebElement pincodeEle = driver.findElement(By.xpath("//input[@placeholder='Pin Code']"));
-        pincodeEle.sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-        pincodeEle.sendKeys(updatedPinCode);
+        FormControlKaryakarta.clearPinCode();
+        FormControlKaryakarta.enterPinCode(SangathanVariableDeclaration.getUpdatedPinCode());
 
         // click on Select Education
-        WebElement selectEducationEle = driver.findElement(By.xpath("//div[contains(text(),'Select Education')]"));
-        selectEducationEle.click();
-        ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        Thread.sleep(2000);
-        // Select Education
-        WebElement EducationValueEle = driver.findElement(
-                By.xpath("//div[contains(@class,'ng-option')]//span[contains(text(),'" + updatedEducation + "')]"));
-        js.executeScript("arguments[0].click();", EducationValueEle);
+        FormControlKaryakarta.clearEducation();
+        FormControlKaryakarta.clickOnEducation();
+        FormControlKaryakarta.selectEducation(SangathanVariableDeclaration.getUpdatedEducation());
 
         // click on Select Profession
-        WebElement selectProfessionEle = driver.findElement(By.xpath("//div[contains(text(),'Select Profession')]"));
-        selectProfessionEle.click();
-        ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        Thread.sleep(2000);
-        // Select Education
-        WebElement ProfessionValueEle = driver.findElement(
-                By.xpath("//div[contains(@class,'ng-option')]//span[contains(text(),'" + updatedProfession + "')]"));
-        js.executeScript("arguments[0].click();", ProfessionValueEle);
+        FormControlKaryakarta.clearProfession();
+        FormControlKaryakarta.clickOnProfession();
+        FormControlKaryakarta.selectProfession(SangathanVariableDeclaration.getUpdatedProfession());
 
         // click on Bike
-        WebElement BikeEle = driver.findElement(By.xpath("//div[contains(text(),'Bike')]"));
-        BikeEle.click();
-        ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        Thread.sleep(1000);
-        WebElement bikeValueEle = driver.findElement(
-                By.xpath("//div[contains(@class,'ng-option')]//span[contains(text(),'" + updatedBike + "')]"));
-        js.executeScript("arguments[0].click();", bikeValueEle);
+        FormControlKaryakarta.clearBike();
+        FormControlKaryakarta.clickOnHasBike();
+        FormControlKaryakarta.selectHasBike(SangathanVariableDeclaration.getUpdatedBike());
 
         // click on Car
-        WebElement CarEle = driver.findElement(By.xpath("//div[contains(text(),'Car')]"));
-        CarEle.click();
-        ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        Thread.sleep(1000);
-        // Select yes or no for bike
-        WebElement carValueEle = driver.findElement(
-                By.xpath("//div[contains(@class,'ng-option')]//span[contains(text(),'" + updatedCar + "')]"));
-        js.executeScript("arguments[0].click();", carValueEle);
+        FormControlKaryakarta.clearHasCar();
+        FormControlKaryakarta.clickOnHasCar();
+        FormControlKaryakarta.selectHasCar(SangathanVariableDeclaration.getUpdatedCar());
 
         // click on Vidhan Sabha where He/She Votes
-        WebElement VidhanSabhawhereHe_SheVotesEle = driver
-                .findElement(By.xpath("//div[contains(text(),'Vidhan Sabha where He/She Votes')]"));
-        VidhanSabhawhereHe_SheVotesEle.click();
-        ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        Thread.sleep(2000);
-        // Select Education
-        WebElement VidhanSabhawhereHe_SheVotesValueEle = driver
-                .findElement(By.xpath("//div[contains(@class,'ng-option')]//span[contains(text(),'"
-                        + updatedVidhanSabhaWhereHeSheVotes + "')]"));
-        js.executeScript("arguments[0].click();", VidhanSabhawhereHe_SheVotesValueEle);
+        FormControlKaryakarta.clearVidhanSabhaWhereHeSheVotes();
+        FormControlKaryakarta.clickOnVidhanSabhaHeSheVotes();
+        FormControlKaryakarta.selectVidhanSabhaHeSheVotes(SangathanVariableDeclaration.getUpdatedVidhanSabhaWhereHeSheVotes());
 
         // Booth where He/She Votes
-        WebElement BoothwhereHe_SheVotesValueEle = driver
-                .findElement(By.xpath("//input[contains(@placeholder, 'Booth where He/She Votes')]"));
-        BoothwhereHe_SheVotesValueEle.sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-        BoothwhereHe_SheVotesValueEle.sendKeys(updatedBoothWhereHeSheVotes);
+        FormControlKaryakarta.clearBoothWhereHeSheVotes();
+        FormControlKaryakarta.enterBoothWhereHeSheVotes(SangathanVariableDeclaration.getUpdatedBoothWhereHeSheVotes());
 
         // Voter Id
-        WebElement votesIdValueEle = driver.findElement(By.xpath("//input[contains(@placeholder, 'ex. UTC026351')]"));
-        votesIdValueEle.sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-        votesIdValueEle.sendKeys(updatedVoterId);
+        FormControlKaryakarta.clearVoterId();
+        FormControlKaryakarta.enterVoterId(SangathanVariableDeclaration.getUpdatedVoterId());
 
         // Aadhaar Number
-        WebElement AadhaarNumberEle = driver
-                .findElement(By.xpath("//input[contains(@placeholder, 'ex. 765478961243')]"));
-        AadhaarNumberEle.sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-        AadhaarNumberEle.sendKeys(updatedAadharNumber);
+        FormControlKaryakarta.clearAadharNumber();
+        FormControlKaryakarta.enterAadharNumber(SangathanVariableDeclaration.getUpdatedAadharNumber());
 
         // Panna Number
-        WebElement PannaNumberEle = driver.findElement(By.xpath("//input[contains(@placeholder, 'Panna Number')]"));
-        PannaNumberEle.sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-        PannaNumberEle.sendKeys(updatedPannaNumber);
+        FormControlKaryakarta.clearPannaNumber();
+        FormControlKaryakarta.enterPannaNumber(SangathanVariableDeclaration.getUpdatedPannaNumber());
 
         // Ration Card Number
-        WebElement RationCardNumberEle = driver
-                .findElement(By.xpath("//input[contains(@placeholder, 'Ration Card Number')]"));
-        RationCardNumberEle.sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-        RationCardNumberEle.sendKeys(updatedRationCardNumber);
+        FormControlKaryakarta.clearRationCardNumber();
+        FormControlKaryakarta.enterRationCardNumber(SangathanVariableDeclaration.getUpdatedRationCardNumber());
 
         // FacebookProfile
-        WebElement FacebookProfileEle = driver
-                .findElement(By.xpath("//input[contains(@placeholder, 'www.fb.com/username')]"));
-        FacebookProfileEle.sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-        FacebookProfileEle.sendKeys(updatedFacebookProfile);
+        FormControlKaryakarta.clearFacebookProfile();
+        FormControlKaryakarta.enterFacebookProfile(SangathanVariableDeclaration.getUpdatedFacebookProfile());
 
         // TwitterProfile
-        WebElement TwitterProfileEle = driver
-                .findElement(By.xpath("//input[contains(@placeholder, 'www.twitter.com/username')]"));
-        TwitterProfileEle.sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-        TwitterProfileEle.sendKeys(updatedTwitterProfile);
+        FormControlKaryakarta.clearTwitterProfile();
+        FormControlKaryakarta.enterTwitterProfile(SangathanVariableDeclaration.getUpdatedTwitterProfile());
 
         // InstagramProfile
-        WebElement InstagramProfileEle = driver
-                .findElement(By.xpath("//input[contains(@placeholder, 'www.instagram.com/username')]"));
-        InstagramProfileEle.sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-        InstagramProfileEle.sendKeys(updatedInstagramProfile);
+        FormControlKaryakarta.clearInstagramProfile();
+        FormControlKaryakarta.enterInstagramProfile(SangathanVariableDeclaration.getUpdatedInstagramProfile());
 
         // LinkedInProfile
-        WebElement LinkedInProfileEle = driver
-                .findElement(By.xpath("//input[contains(@placeholder, 'www.linkedin.com/username')]"));
-        LinkedInProfileEle.sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-        LinkedInProfileEle.sendKeys(updatedLinkedinProfile);
+        FormControlKaryakarta.clearLinkedinProfile();
+        FormControlKaryakarta.enterLinkedinProfile(SangathanVariableDeclaration.getUpdatedTwitterProfile());
 
-        Thread.sleep(2000);
+
         // click on Salutation
-        WebElement SalutationEle = driver.findElements(By.className("mat-select-value-text")).get(0);
-        SalutationEle.click();
-        ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        Thread.sleep(1000);
-        // Select SalutationEle
-        WebElement salutationValueEle = driver.findElement(
-                By.xpath("//mat-option[contains(@role,'option')]//span[contains(text(),'" + updatedSalutation + "')]"));
-        js.executeScript("arguments[0].click();", salutationValueEle);
+        FormControlKaryakarta.clickOnSalutation();
+        FormControlKaryakarta.selectSalutation(SangathanVariableDeclaration.getUpdatedSalutation());
+
 
         // Sub Caste
-        WebElement SubCasteEle = driver.findElement(By.xpath("//input[contains(@placeholder, 'Sub caste')]"));
-        SubCasteEle.sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-        SubCasteEle.sendKeys(updatedSubCaste);
+        FormControlKaryakarta.clearSubCaste();
+        FormControlKaryakarta.enterSubCaste(SangathanVariableDeclaration.getUpdatedSubCaste());
 
         // Qualification
-        WebElement QualificationEle = driver.findElement(By.xpath("//input[contains(@placeholder, 'Qualification')]"));
-        QualificationEle.sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-        QualificationEle.sendKeys(updatedQualification);
+        FormControlKaryakarta.clearQualification();
+        FormControlKaryakarta.enterQualification(SangathanVariableDeclaration.getUpdatedQualification());
 
         // Religion
-        WebElement ReligionEle = driver.findElements(By.className("mat-select-value-text")).get(1);
-        ReligionEle.click();
-        ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        Thread.sleep(1000);
-        // Select Religion
-        WebElement ReligionEleValueEle = driver.findElement(
-                By.xpath("//mat-option[contains(@role,'option')]//span[contains(text(),'" + updatedReligion + "')]"));
-        js.executeScript("arguments[0].click();", ReligionEleValueEle);
+        FormControlKaryakarta.clickOnReligion();
+        FormControlKaryakarta.selectReligion(SangathanVariableDeclaration.getUpdatedReligion());
 
         // Active Member Id
-        WebElement ActiveMemberIdValueEle = driver
-                .findElement(By.xpath("//input[contains(@placeholder, 'Active Member Id')]"));
-        ActiveMemberIdValueEle.sendKeys(Keys.CONTROL, "a", Keys.DELETE);
-        ActiveMemberIdValueEle.sendKeys(updatedActiveMemberId);
+        FormControlKaryakarta.clearActiveMemberId();
+        FormControlKaryakarta.enterActiveMemberId(SangathanVariableDeclaration.getUpdatedActiveMemberId());
 
         // Clear Party Zila
-        WebElement SelectPartyZilaIdEle = sangathanPageObjects.getSelectPartyZilaEle();
-        WebElement clearPartyZila = driver
-                .findElement(with(By.xpath("//span[@title='Clear all']")).toRightOf(SelectPartyZilaIdEle));
-        clearPartyZila.click();
-//        // Party Zila and Party Mandal
-//        apply_validation_in_party_zila_and_mandal();
-//
-//        // click Select Party Zila Id
-//        WebElement SelectPartyMandalEle = driver.findElement(By.xpath("//div[contains(text(),'Select Party Mandal')]"));
-//        SelectPartyZilaIdEle.click();
-//        ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-//        Thread.sleep(2000);
-//        // Select Party Zila Id
-//        WebElement PartyZilaIdValueEle = driver
-//                .findElement(By.xpath("//div//span[contains(text(),'" + updatedPartyZila + "')]"));
-//        js.executeScript("arguments[0].click();", PartyZilaIdValueEle);
-//
-//        // click Select Party Mandal
-//
-//        List<WebElement> partyMandalOverlayEle = driver
-//                .findElements(By.xpath("//div[@class='overlay ng-star-inserted']"));
-//        while (partyMandalOverlayEle.size() > 0) {
-//            System.out.println("partyMandal Overlay 1 ........");
-//            partyMandalOverlayEle = driver.findElements(By.xpath("//div[@class='overlay ng-star-inserted']"));
-//            Thread.sleep(1000);
-//        }
-//
-//        System.out.println("--- overlay gone of party Mandal-------");
-//
-//        SelectPartyMandalEle = driver.findElement(By.xpath("//div[contains(text(),'Select Party Mandal')]"));
-//        wait.until(ExpectedConditions.elementToBeClickable(SelectPartyMandalEle)).click();
-//        ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-//        Thread.sleep(2000);
-//        // Select Party Mandal
-//        WebElement enterPartyMandalEle = driver.findElement(with(By.tagName("input")).below(SelectPartyMandalEle));
-//        enterPartyMandalEle.sendKeys(updatedPartyMandal);
-//        enterPartyMandalEle.sendKeys(Keys.ENTER);
-//        ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
+        FormControlKaryakarta.clearPartyZila();
 
-        // Party Zila and Party Mandal
+        // Party Zila and Party Mandal validation
         apply_validation_in_party_zila_and_mandal();
 
-        // click Select Party Zila Id
-        //WebElement SelectPartyZilaIdEle = sangathanPageObjects.getSelectPartyZilaEle();
-        ExceptionHandler.clickElementWithRetry(SelectPartyZilaIdEle);
-        ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        Thread.sleep(2000);
+        // click on party zila placeholder
+        FormControlKaryakarta.clickOnPartyZila();
 
         // Select Party Zila Id
-        WebElement PartyZilaIdValueEle = sangathanPageObjects.getPartyZilaValueEle(partyZila);
-        wait.until(ExpectedConditions.visibilityOf(PartyZilaIdValueEle));
-        ExceptionHandler.clickElementWithRetry(PartyZilaIdValueEle);
+        FormControlKaryakarta.selectPartyZila(SangathanVariableDeclaration.getUpdatedPartyZila());
 
-        // Party Mandal
-        WebElement SelectPartyMandalEle = sangathanPageObjects.getSelectPartyMandalEle();
-        wait.until(ExpectedConditions.elementToBeClickable(SelectPartyMandalEle));
-        ExceptionHandler.clickElementWithRetry(SelectPartyMandalEle);
-        ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
-        Thread.sleep(2000);
+        // Click On Party Mandal
+        FormControlKaryakarta.clickOnPartyMandal();
         // Select Party Mandal
-        WebElement enterPartyMandalEle = driver.findElement(with(By.tagName("input")).below(SelectPartyMandalEle));
-        enterPartyMandalEle.sendKeys(partyMandal);
-        enterPartyMandalEle.sendKeys(Keys.ENTER);
-        ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
+        FormControlKaryakarta.selectPartyMandal(SangathanVariableDeclaration.getUpdatedPartyMandal());
 
     }
 
@@ -1768,7 +1663,7 @@ public class WardKaryakarta {
         WebElement data_entryDynamicTableEle = sangathanPageObjects.getData_EntryDynamicTableEle();
         js.executeScript("arguments[0].scrollIntoView(true);", data_entryDynamicTableEle);
 
-        get_karyakarta_data_to_delete(updatedPhoneNumber);
+        get_karyakarta_data_to_delete(SangathanVariableDeclaration.getUpdatedPhoneNumber());
         WebElement deleteEleBoxText = driver
                 .findElement(By.xpath("//mat-label[.='Please Select A Reason For Deletion']"));
         wait.until(ExpectedConditions.visibilityOf(deleteEleBoxText));
@@ -1799,26 +1694,32 @@ public class WardKaryakarta {
         // get all the added data.
         user_clicks_on_enter_more_details();
 
-        // Name
-        copiedEnteredName = driver.findElement(By.xpath("//input[@placeholder='Name']")).getAttribute("value");
-        Assert.assertEquals(copiedEnteredName.toUpperCase(), updatedName.toUpperCase());
+        // set copied name
+        SangathanVariableDeclaration.setCopiedName(FormControlKaryakarta.getEnteredName());
+        // Verifying copied and updated name
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedName(), SangathanVariableDeclaration.getUpdatedName().toUpperCase());
 
-        // Father's/Husband's Name
-        copiedEnteredFather_Husband_Name = driver.findElement(By.xpath("//input[contains(@placeholder, 'Father')]"))
-                .getAttribute("value");
-        Assert.assertEquals(updatedFatherName.toUpperCase(), copiedEnteredFather_Husband_Name.toUpperCase());
+        // set copied father name
+        SangathanVariableDeclaration.setCopiedFatherName(FormControlKaryakarta.getEnteredRelationName());
+        //Verifying copied and updated father name
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedFatherName().toUpperCase(), SangathanVariableDeclaration.getUpdatedFatherName()
+                .toUpperCase());
 
-        // Designation
-        WebElement SelectDesignationEle = driver.findElement(By.xpath("//div[contains(text(),'Select Designation')]"));
-        copiedSelectedDesignation = driver.findElement(with(By.className("ng-value-label")).below(SelectDesignationEle))
-                .getText();
-        Assert.assertEquals(copiedSelectedDesignation, updatedDesignation);
+        // set copied designation
+//        WebElement SelectDesignationEle = driver.findElement(By.xpath("//div[contains(text(),'Select Designation')]"));
+//        copiedSelectedDesignation = driver.findElement(with(By.className("ng-value-label")).below(SelectDesignationEle))
+//                .getText();
+        SangathanVariableDeclaration.setCopiedDesignation(FormControlKaryakarta.getSelectedDesignation());
+        //verifying copied designation and updated designation
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedDesignation(), SangathanVariableDeclaration.getUpdatedDesignation());
 
-        // Has SmartPhone
-        WebElement hasSmartPhoneEle = driver.findElement(By.xpath("//div[contains(text(),'Has Smartphone')]"));
-        copiedHasSmartPhone = driver.findElement(with(By.className("ng-value-label")).below(hasSmartPhoneEle))
-                .getText();
-        Assert.assertEquals(copiedHasSmartPhone, updatedHasSmartPhone);
+        // Set Copied Has SmartPhone
+//        WebElement hasSmartPhoneEle = driver.findElement(By.xpath("//div[contains(text(),'Has Smartphone')]"));
+//        copiedHasSmartPhone = driver.findElement(with(By.className("ng-value-label")).below(hasSmartPhoneEle))
+//                .getText();
+        SangathanVariableDeclaration.setCopiedHasSmartPhone(FormControlKaryakarta.getSelectedHasSmartPhone());
+        //Verifying copied and updated Has Smart Phone
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedHasSmartPhone(), SangathanVariableDeclaration.getUpdatedHasSmartPhone());
 
         // Phone Number
         copiedPhoneNo = driver.findElement(By.xpath("//input[@placeholder='Phone Number']")).getAttribute("value");
@@ -1858,19 +1759,19 @@ public class WardKaryakarta {
         Assert.assertEquals(classOfselectedGender.contains("mat-radio-checked"), true,
                 "seems like gender is not selected");
 
-        // WhatsApp
-        copiedWhatsAppNumber = driver.findElement(By.xpath("//input[@placeholder='WhatsApp Number']"))
-                .getAttribute("value");
-        Assert.assertEquals(copiedWhatsAppNumber, updatedWhatsApp);
+        // set copied WhatsApp Number
+        SangathanVariableDeclaration.setCopiedWhatsApp(FormControlKaryakarta.getEnteredWhatsAppNumber());
+        //Verifying copied whatsapp number and updated whatsapp number
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedWhatsApp(), SangathanVariableDeclaration.getUpdatedWhatsApp());
 
-        // STD Code
-        copiedStdCode = driver.findElement(By.xpath("//input[@placeholder='STD Code']")).getAttribute("value");
-        Assert.assertEquals(copiedStdCode, updatedStdCode);
+        // set STD Code
+        SangathanVariableDeclaration.setCopiedStdCode(FormControlKaryakarta.getEnteredSTDCode());
+        // Verifying copied std code and updated std code
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedStdCode(), SangathanVariableDeclaration.getUpdatedStdCode());
 
         // Landline Number
-        copiedLandLineNo = driver.findElement(By.xpath("//input[@placeholder='Landline Number']"))
-                .getAttribute("value");
-        Assert.assertEquals(copiedLandLineNo, updatedLandlineNumber);
+        SangathanVariableDeclaration.setCopiedLandlineNumber(FormControlKaryakarta.getEnteredLandlineNumber());
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedLandlineNumber(), SangathanVariableDeclaration.getUpdatedLandlineNumber());
 
         // Select Category
         WebElement SelectCategoryEle = driver.findElement(By.xpath("//div[contains(text(),'Select Category')]"));
@@ -1951,9 +1852,8 @@ public class WardKaryakarta {
         Assert.assertEquals(copiedBothWhereHeSheVotes, updatedBoothWhereHeSheVotes);
 
         // Voter Id
-        copiedVoterId = driver.findElement(By.xpath("//input[contains(@placeholder, 'ex. UTC026351')]"))
-                .getAttribute("value");
-        Assert.assertEquals(copiedVoterId, updatedVoterId);
+        SangathanVariableDeclaration.setCopiedVoterId(FormControlKaryakarta.getEnteredVoterId());
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedVoterId(), SangathanVariableDeclaration.getUpdatedVoterId());
 
         // Aadhaar Number
         copiedAadhaarNumber = driver.findElement(By.xpath("//input[contains(@placeholder, 'ex. 765478961243')]"))
@@ -2048,49 +1948,92 @@ public class WardKaryakarta {
         js = (JavascriptExecutor) driver;
         Map<String, String> map = Karyakarta_Edit_Details.asMap(String.class, String.class);
         // Get Data
-        updatedName = map.get("Name");
-        updatedFatherName = map.get("Father Name");
-        updatedDesignation = map.get("Designation");
-        updatedHasSmartPhone = map.get("Has Smartphone");
-        updatedPhoneNumber = map.get("Phone Number");
-        updatedPrimaryMemberId = map.get("Primary Member ID");
-        updatedAge = map.get("Age");
-        updatedGender = map.get("Gender");
-        updatedWhatsApp = map.get("WhatsApp Number");
-        updatedStdCode = map.get("STD Code");
-        updatedLandlineNumber = map.get("Landline Number");
-        updatedCategory = map.get("Category");
-        updatedCaste = map.get("Caste");
-        updatedEmail = map.get("Email");
-        updatedDob = map.get("Dob");
-        updatedFullAddress = map.get("Full Address");
-        updatedVillage = map.get("Village");
-        updatedTaluka = map.get("Taluka");
-        updatedDistrict = map.get("District");
-        updatedPinCode = map.get("Pin Code");
-        updatedEducation = map.get("Education");
-        updatedProfession = map.get("Profession");
-        updatedBike = map.get("Bike");
-        updatedCar = map.get("Car");
-        updatedVidhanSabhaWhereHeSheVotes = map.get("Vidhan Sabha where he/she votes");
-        updatedBoothWhereHeSheVotes = map.get("Booth where he/she votes");
+        //updatedName
+        SangathanVariableDeclaration.setUpdatedName(map.get("Name"));
+        //updatedFatherName
+        SangathanVariableDeclaration.setUpdatedFatherName(map.get("Father Name"));
+        //updatedDesignation
+        SangathanVariableDeclaration.setUpdatedDesignation(map.get("Designation"));
+        //updatedHasSmartPhone
+        SangathanVariableDeclaration.setUpdatedHasSmartPhone(map.get("Has Smartphone"));
+        //updatedPhoneNumber
+        SangathanVariableDeclaration.setUpdatedPhoneNumber(map.get("Phone Number"));
+        //updatedPrimaryMemberId
+        SangathanVariableDeclaration.setUpdatedPrimaryMemberId(map.get("Primary Member ID"));
+        //updatedAge
+        SangathanVariableDeclaration.setUpdatedAge("Age");
+        //updatedGender
+        SangathanVariableDeclaration.setUpdatedGender(map.get("Gender"));
+        //updatedWhatsApp
+        SangathanVariableDeclaration.setUpdatedWhatsApp(map.get("WhatsApp Number"));
+        //updatedStdCode
+        SangathanVariableDeclaration.setUpdatedStdCode(map.get("STD Code"));
+        //updatedLandlineNumber
+        SangathanVariableDeclaration.setUpdatedLandlineNumber(map.get("Landline Number"));
+        //updatedCategory
+        SangathanVariableDeclaration.setUpdatedCategory(map.get("Category"));
+        //updatedCaste
+        SangathanVariableDeclaration.setUpdatedCaste(map.get("Caste"));
+        //updatedEmail
+        SangathanVariableDeclaration.setUpdatedEmail(map.get("Email"));
+        //updatedDob
+        SangathanVariableDeclaration.setUpdatedDob(map.get("Dob"));
+        //updatedFullAddress
+        SangathanVariableDeclaration.setUpdatedFullAddress(map.get("Full Address"));
+        //updatedVillage
+        SangathanVariableDeclaration.setUpdatedVillage(map.get("Village"));
+        //updatedTaluka
+        SangathanVariableDeclaration.setUpdatedTaluka(map.get("Taluka"));
+        //updatedDistrict = map.get("District");
+        SangathanVariableDeclaration.setUpdatedDistrict(map.get("District"));
+        //updatedPinCode
+        SangathanVariableDeclaration.setUpdatedPinCode(map.get("Pin Code"));
+        //updatedEducation
+        SangathanVariableDeclaration.setUpdatedEducation(map.get("Education"));
+        //updatedProfession
+        SangathanVariableDeclaration.setUpdatedProfession(map.get("Profession"));
+        //updatedBike
+        SangathanVariableDeclaration.setUpdatedBike(map.get("Bike"));
+        //updatedCar
+        SangathanVariableDeclaration.setUpdatedCar(map.get("Car"));
+        //updatedVidhanSabhaWhereHeSheVotes
+        SangathanVariableDeclaration.setUpdatedVidhanSabhaWhereHeSheVotes(map.get("Vidhan Sabha where he/she votes"));
+        //updatedBoothWhereHeSheVotes
+        SangathanVariableDeclaration.setUpdatedBoothWhereHeSheVotes(map.get("Booth where he/she votes"));
         updatedVoterId = map.get("Voter Id");
-        updatedAadharNumber = map.get("Aadhaar Number");
-        updatedPannaNumber = map.get("Panna Number");
-        updatedRationCardNumber = map.get("Ration Card Number");
-        updatedFacebookProfile = map.get("Facebook Profile");
-        updatedTwitterProfile = map.get("Twitter Profile");
-        updatedInstagramProfile = map.get("Intagram Profile");
-        updatedLinkedinProfile = map.get("Linkedin Profile");
-        updatedImage = map.get("Image");
-        updatedSalutation = map.get("Salutation");
-        updatedSubCaste = map.get("Sub Caste");
-        updatedQualification = map.get("Qualification");
-        updatedReligion = map.get("Religion");
-        updatedActiveMemberId = map.get("Active Member Id");
-        updatedPartyZila = map.get("Party Zila");
-        updatedPartyMandal = map.get("Party Mandal");
-        updatedBloodGroup = map.get("Blood Group");
+        SangathanVariableDeclaration.setUpdatedVoterId(map.get("Voter Id"));
+        //updatedAadharNumber
+        SangathanVariableDeclaration.setUpdatedAadharNumber(map.get("Aadhaar Number"));
+        //updatedPannaNumber
+        SangathanVariableDeclaration.setUpdatedPannaNumber(map.get("Panna Number"));
+        //updatedRationCardNumber
+        SangathanVariableDeclaration.setUpdatedRationCardNumber(map.get("Ration Card Number"));
+        //updatedFacebookProfile
+        SangathanVariableDeclaration.setUpdatedFacebookProfile(map.get("Facebook Profile"));
+        //updatedTwitterProfile
+        SangathanVariableDeclaration.setUpdatedTwitterProfile(map.get("Twitter Profile"));
+        //updatedInstagramProfile
+        SangathanVariableDeclaration.setUpdatedInstagramProfile(map.get("Intagram Profile"));
+        //updatedLinkedinProfile
+        SangathanVariableDeclaration.setUpdatedLinkedinProfile(map.get("Linkedin Profile"));
+        //updatedImage
+        SangathanVariableDeclaration.setUpdatedImage(map.get("Image"));
+        //updatedSalutation
+        SangathanVariableDeclaration.setUpdatedSalutation(map.get("Salutation"));
+        //updatedSubCaste
+        SangathanVariableDeclaration.setUpdatedSubCaste(map.get("Sub Caste"));
+        //updatedQualification
+        SangathanVariableDeclaration.setUpdatedQualification(map.get("Qualification"));
+        //updatedReligion
+        SangathanVariableDeclaration.setUpdatedReligion(map.get("Religion"));
+        //updatedActiveMemberId
+        SangathanVariableDeclaration.setUpdatedActiveMemberId(map.get("Active Member Id"));
+        //updatedPartyZila
+        SangathanVariableDeclaration.setUpdatedPartyZila(map.get("Party Zila"));
+        //updatedPartyMandal
+        SangathanVariableDeclaration.setUpdatedPartyMandal(map.get("Party Mandal"));
+        //updatedBloodGroup
+        SangathanVariableDeclaration.setUpdatedBloodGroup(map.get("Blood Group"));
         js.executeScript("arguments[0].scrollIntoView(true);", driver.findElement(By.xpath("//table")));
         System.out.println("updatedPhoneNumber????: " + updatedPhoneNumber);
         List<WebElement> colms = driver.findElements(By.xpath("//table/thead/tr/th"));
@@ -2195,14 +2138,12 @@ public class WardKaryakarta {
                         Assert.assertEquals(copiedWhatsAppNumber, updatedWhatsApp);
 
                         // STD Code
-                        copiedStdCode = driver.findElement(By.xpath("//input[@placeholder='STD Code']"))
-                                .getAttribute("value");
-                        Assert.assertEquals(copiedStdCode, updatedStdCode);
+                        SangathanVariableDeclaration.setCopiedStdCode(FormControlKaryakarta.getEnteredSTDCode());
+                        Assert.assertEquals(SangathanVariableDeclaration.getCopiedStdCode(), SangathanVariableDeclaration.getUpdatedStdCode());
 
                         // Landline Number
-                        copiedLandLineNo = driver.findElement(By.xpath("//input[@placeholder='Landline Number']"))
-                                .getAttribute("value");
-                        Assert.assertEquals(copiedLandLineNo, updatedLandlineNumber);
+                        SangathanVariableDeclaration.setCopiedLandlineNumber(FormControlKaryakarta.getEnteredLandlineNumber());
+                        Assert.assertEquals(SangathanVariableDeclaration.getCopiedLandlineNumber(), SangathanVariableDeclaration.getUpdatedLandlineNumber());
 
                         // Select Category
                         WebElement SelectCategoryEle = driver
@@ -2734,13 +2675,12 @@ public class WardKaryakarta {
         Assert.assertEquals(copiedWhatsAppNumber, updatedWhatsApp);
 
         // STD Code
-        copiedStdCode = driver.findElement(By.xpath("//input[@placeholder='STD Code']")).getAttribute("value");
-        Assert.assertEquals(copiedStdCode, updatedStdCode);
+        SangathanVariableDeclaration.setCopiedStdCode(FormControlKaryakarta.getEnteredSTDCode());
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedStdCode(), SangathanVariableDeclaration.getUpdatedStdCode());
 
         // Landline Number
-        copiedLandLineNo = driver.findElement(By.xpath("//input[@placeholder='Landline Number']"))
-                .getAttribute("value");
-        Assert.assertEquals(copiedLandLineNo, updatedLandlineNumber);
+        SangathanVariableDeclaration.setCopiedLandlineNumber(FormControlKaryakarta.getEnteredLandlineNumber());
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedLandlineNumber(), SangathanVariableDeclaration.getUpdatedLandlineNumber());
 
         // Select Category
         WebElement SelectCategoryEle = driver.findElement(By.xpath("//div[contains(text(),'Select Category')]"));
@@ -3133,9 +3073,11 @@ public class WardKaryakarta {
                         List<WebElement> actionAllEle = driver.findElements(By.xpath("//button//img"));
                         wait.until(ExpectedConditions.visibilityOfAllElements(actionAllEle));
                         WebElement editButtonEle = driver.findElement(By.xpath("//button//span[text()='Edit']"));
+                        WaitUtils.waitForElementToBeClickable(driver, editButtonEle);
                         js.executeScript("arguments[0].click();", editButtonEle);
                         ngDriver = new NgWebDriver((JavascriptExecutor) driver);
                         Thread.sleep(2000);
+                        load_wait.waitForPageLoad();
                         return;
 
                     }
@@ -3195,17 +3137,17 @@ public class WardKaryakarta {
             if (columnHeaderNamesText.contains("Name")) {
                 String nameTableValue = firstRowValueList.get(c).getText();
                 System.out.println("nameTableValue: " + nameTableValue);
-                Assert.assertEquals(nameTableValue, name);
+                Assert.assertEquals(nameTableValue, SangathanVariableDeclaration.getNameVariable());
             }
             if (columnHeaderNamesText.contains("Father's/Husband's Name")) {
                 String relationTableValue = firstRowValueList.get(c).getText();
                 System.out.println("nameTableValue: " + relationTableValue);
-                Assert.assertEquals(relationTableValue, fatherName);
+                Assert.assertEquals(relationTableValue, SangathanVariableDeclaration.getFatherNameVariable());
             }
             if (columnHeaderNamesText.contains("Designation")) {
                 String designationTableValue = firstRowValueList.get(c).getText();
                 System.out.println("nameTableValue: " + designationTableValue);
-                Assert.assertEquals(designationTableValue, designation);
+                Assert.assertEquals(designationTableValue, SangathanVariableDeclaration.getDesignationVariable());
             }
         }
 

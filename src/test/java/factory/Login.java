@@ -14,6 +14,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import com.paulhammant.ngwebdriver.NgWebDriver;
 
 import resources.Base;
+import resources.DriverFactory1;
 
 public class Login extends Base {
     static WebDriver driver;
@@ -30,9 +31,10 @@ public class Login extends Base {
 
     public static void login_in_saral_application(String login_email, String login_password, String login_otp)
             throws InterruptedException, IOException {
-        driver = DriverFactory.getDriver();
+        driver = DriverFactory.getInstance().getDriver();
+        //driver = DriverFactory1.getInstance().getDriver();
         //driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(60));
-        DriverFactory.getDriver().get("https://zila-staging.ccdms.in/");
+        driver.get("https://zila-staging.ccdms.in/");
         ngDriver = new NgWebDriver((JavascriptExecutor) driver);
         wait = new WebDriverWait(driver, Duration.ofSeconds(110));
         js = (JavascriptExecutor) driver;

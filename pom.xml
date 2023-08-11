@@ -14,7 +14,7 @@
         <junit.version>4.13.2</junit.version>
         <cucumber.version>7.11.0</cucumber.version>
         <maven.compiler.version>3.8.0</maven.compiler.version>
-        <maven.surefire.version>3.1.2</maven.surefire.version>
+        <maven.surefire.version>3.0.0-M5</maven.surefire.version>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
     </properties>
@@ -103,7 +103,7 @@
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>7.7.1</version>
+            <version>7.8.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -159,11 +159,6 @@
             <plugins>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.19.1</version>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>${maven.compiler.version}</version>
                     <configuration>
@@ -189,9 +184,10 @@
                             </goals>
                             <configuration>
                                 <!--suppress UnresolvedMavenProperty -->
-                                <suiteXmlFiles>${xmlSuiteFileName}</suiteXmlFiles>
+                                <suiteXmlFiles>testng.xml</suiteXmlFiles>
                                 <includes>
-                                    <include>**/ParallelRun.java</include>
+                                    <include>runner/pradeshKaryakartaRunner.java</include>
+                                    <include>runner/wardKaryakartaRunner.java</include>
                                 </includes>
                                 <parallel>methods</parallel>
                                 <threadCount>4</threadCount>

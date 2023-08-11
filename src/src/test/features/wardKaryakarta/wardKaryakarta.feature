@@ -23,7 +23,7 @@ Feature: Testing data entry for ward level karyakarta
       | Name                            | Ward Karyakarta Automation     |
       | Father Name                     | testautomation                 |
       | Designation                     | Member                         |
-      | Phone Number                    | 8111112234                     |
+      | Phone Number                    |                                |
       | Has Smartphone                  | Yes                            |
       | Primary Member ID               | 1234567876                     |
       | Age                             | 45                             |
@@ -66,7 +66,7 @@ Feature: Testing data entry for ward level karyakarta
     And user click on add button
     And user click on edit button for recently added entry
     And user verify all the added data
-#When user enter data with duplicate phone which is already exist on given data level, unit, and subunit
+#    When user enter data with duplicate phone which is already exist on given data level, unit, and subunit
     Then user edit all the added data with new data
       | Input Fields                    | Edit Input Data                 |
       | Name                            | Ward Karyakarta Automation Edit |

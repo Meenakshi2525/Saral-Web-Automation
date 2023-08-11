@@ -10,7 +10,16 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class DriverFactory {
 
-    public WebDriver driver;
+    //singleton design pattern - only one instance exits ever , provide global access to that instance by creating getInstance method
+
+    public DriverFactory(){
+
+    }
+
+    private static DriverFactory instance = new DriverFactory();
+    public static DriverFactory getInstance(){
+        return instance;
+    }
 
     public static ThreadLocal<WebDriver> tlDriver = new ThreadLocal<WebDriver>();
 
@@ -31,7 +40,7 @@ public class DriverFactory {
             tlDriver.set(new FirefoxDriver());
 
         } else if (browserName.equals("safari")) {
-            driver = new SafariDriver();
+            tlDriver.set(new SafariDriver());
 
         }
         getDriver().manage().deleteAllCookies();
@@ -42,8 +51,16 @@ public class DriverFactory {
 
     // This is used to get the driver with ThreadLocal
 
-    public static synchronized WebDriver getDriver() {
+    public static WebDriver getDriver() {
         return tlDriver.get();
+    }
+
+    public static void quitDriver(){
+       WebDriver driver = getDriver();
+        if (driver != null) {
+            driver.quit();
+            tlDriver.remove();
+        }
     }
 
 }
