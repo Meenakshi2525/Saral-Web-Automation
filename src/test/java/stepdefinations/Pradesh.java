@@ -49,7 +49,7 @@ public class Pradesh {
         load_wait.waitForPageLoad();
         ngDriver.withRootSelector("\"app-root\"").waitForAngularRequestsToFinish();
         Thread.sleep(2000);
-
+        System.out.println("New changes");
     }
 
     @And("^user select pradesh data filter$")
