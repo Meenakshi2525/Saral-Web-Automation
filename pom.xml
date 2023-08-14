@@ -186,8 +186,8 @@
                                 <!--suppress UnresolvedMavenProperty -->
                                 <suiteXmlFiles>testng.xml</suiteXmlFiles>
                                 <includes>
-                                    <include>runner/pradeshKaryakartaRunner.java</include>
-                                    <include>runner/wardKaryakartaRunner.java</include>
+                                    <include>sangathan_runner/pradeshKaryakartaRunner.java</include>
+                                    <include>sangathan_runner/wardKaryakartaRunner.java</include>
                                 </includes>
                                 <parallel>methods</parallel>
                                 <threadCount>4</threadCount>

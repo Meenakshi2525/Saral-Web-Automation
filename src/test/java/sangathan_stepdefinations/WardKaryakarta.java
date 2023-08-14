@@ -1,8 +1,7 @@
-package stepdefinations;
+package sangathan_stepdefinations;
 
 import com.paulhammant.ngwebdriver.NgWebDriver;
 import factory.*;
-import hooks.MyHooks;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
@@ -12,19 +11,15 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
-import org.openqa.selenium.interactions.SourceType;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
-import resources.Base;
-import resources.DriverFactory1;
 import resources.SangathanPageObjects;
 import resources.WardPageObjects;
 import utils.KaryakaryaDataEntryFormControl;
 import utils.SangathanVariableDeclaration;
 
 import java.io.IOException;
-import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.*;

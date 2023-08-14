@@ -3,12 +3,12 @@
 <suite name="Suite" parallel="tests" thread-count="2">
     <test name="WardKaryakartaDataEntryTest" parallel="methods">
         <classes>
-            <class name="runner.wardKaryakartaRunner"></class>
+            <class name="sangathan_runner.wardKaryakartaRunner"></class>
         </classes>
     </test> <!-- Test -->
     <test name="PradeshDataEntryTest" parallel="methods">
         <classes>
-            <class name="runner.pradeshKaryakartaRunner"></class>
+            <class name="sangathan_runner.pradeshKaryakartaRunner"></class>
         </classes>
     </test> <!-- Test -->
 </suite> <!-- Suite -->
