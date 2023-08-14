@@ -1,10 +1,9 @@
-package stepdefinations;
+package sangathan_stepdefinations;
 
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
-import hooks.MyHooks;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -19,7 +18,6 @@ import factory.DriverFactory;
 import factory.WaitUtils;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.And;
-import resources.DriverFactory1;
 
 
 public class Pradesh {
