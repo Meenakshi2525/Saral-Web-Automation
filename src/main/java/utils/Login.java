@@ -1,4 +1,4 @@
-package resources;
+package utils;
 
 import java.io.IOException;
 import java.time.Duration;

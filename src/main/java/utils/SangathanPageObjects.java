@@ -1,5 +1,5 @@
 
-package resources;
+package utils;
 
 import java.util.List;
 
@@ -69,6 +69,8 @@ public class SangathanPageObjects {
 
     By talukaEle = By.xpath("//input[contains(@placeholder, 'Taluka')]");
     By selectDistrictEle = By.xpath("//div[contains(text(),'Select District')]");
+
+    By inputDropdownEle = By.tagName("input");
 
     By pincodeEle = By.xpath("//input[@placeholder='Pin Code']");
 
@@ -275,6 +277,9 @@ public class SangathanPageObjects {
     }
     public WebElement getClearDistrictEle(){
         return driver.findElement(with(clearDropdownEle).toRightOf(selectDistrictEle));
+    }
+    public WebElement enterTextInDistrict(){
+       return driver.findElement(with(inputDropdownEle).below(selectDistrictEle));
     }
 
     public WebElement getPincodeEle() {

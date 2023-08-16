@@ -25,7 +25,7 @@ public class WaitUtils {
         }
         for (int i = 0; i < 50; i++) {
             try {
-                Thread.sleep(1000);
+                Thread.sleep(5000);
             } catch (InterruptedException ex) {
                 System.out.println("Page has not loaded yet ");
             }

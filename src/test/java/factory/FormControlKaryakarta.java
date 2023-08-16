@@ -4,11 +4,9 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import com.paulhammant.ngwebdriver.NgWebDriver;
-import resources.SangathanPageObjects;
+import utils.SangathanPageObjects;
 import utils.RandomStringGenerationUtils;
 import utils.SangathanVariableDeclaration;
-
-import javax.management.relation.Relation;
 
 public class FormControlKaryakarta {
 
@@ -446,6 +444,7 @@ public class FormControlKaryakarta {
     }
 
     public static void selectDistrict(String district) {
+        sangathanPageObjects.enterTextInDistrict().sendKeys(district);
         WebElement selectDistrictEle = sangathanPageObjects.getDistrictValueEle(district);
         ExceptionHandler.clickElementWithRetry(selectDistrictEle);
     }

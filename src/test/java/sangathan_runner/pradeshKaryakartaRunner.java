@@ -5,7 +5,7 @@ import io.cucumber.testng.AbstractTestNGCucumberTests;
 import io.cucumber.testng.CucumberOptions;
 
 
-@CucumberOptions(features = "src/src/test/features/Pradesh/pradesh.feature", glue = {"sangathan_stepdefinations",
+@CucumberOptions(features = "src/src/test/sangathan_features/Pradesh/pradesh.feature", glue = {"sangathan_stepdefinations",
         "hooks" }, publish = true, plugin = {"pretty", "html:target/CucumberReports/CucumberPradeshRepor.html" } ,
 
         tags="@Test_with_few_data"
