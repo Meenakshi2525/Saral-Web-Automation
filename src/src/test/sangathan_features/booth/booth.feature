@@ -1,26 +1,26 @@
-Feature: Testing data entry for vibhag level
+Feature: Testing data entry for booth level karyakarta
   Background:
     Given user logged in into the saral application
       |Email|state.adminup@gmail.com|
       |Password|Abc@1234|
       |Otp|010203|
-  Scenario: Testing vibhag add data and edit entry functionality
+  Scenario: Testing booth karyakarta add data and edit entry functionality
     Then user click on sangathan data management card on dashboard
-    And user click on add entry button for vibhag
-    And user select vibhag karyakarta data filter
-      |Input Fields           |Input Data         |
-      |state                  |Uttar Pradesh      |
-      |vibhag                 |Uttar Pradesh North|
-      |Organisation Unit      |Core Sangathan     |
-      |Organisation Sub Unit  |Office Bearer      |
-    And user click on search button and verify vibhag filter text
+    And user click on add entry button for booth
+    And user select booth data filter
+      |Input Fields|Input Data                                 |
+      |VidhanSabha |- Behat                                    |
+      |Booth       |- Prathamik Vidyalaya Kaksh Nambar 1 Rahana|
+      |Mandal      |Are Very                                   |
+      |ShaktiKendra|Ahiran                                     |
+    And user click on search button and verify booth filter text
     And user clicks on enter more details
     Then user input below details in data entry form with input fields validation
       |Input Fields                   |Input Data                    |
-      |Name                           |Ward Karyakarta Automation    |
+      |Name                           |booth Karyakarta Automation   |
       |Father Name                    |testautomation                |
       |Designation                    |Member                        |
-      |Phone Number                   |8111112234                    |
+      |Phone Number                   |8111112236                    |
       |Has Smartphone                 |Yes                           |
       |Primary Member ID              |1234567876                    |
       |Age                            |45                            |
@@ -69,7 +69,7 @@ Feature: Testing data entry for vibhag level
       |Name                           |Ward Karyakarta Automation Edit|
       |Father Name                    |testautomationedit             |
       |Designation                    |UPDesig                        |
-      |Phone Number                   |8111112235                     |
+      |Phone Number                   |8111112236                     |
       |Has Smartphone                 |No                             |
       |Primary Member ID              |1234567877                     |
       |Age                            |48                             |
@@ -110,8 +110,6 @@ Feature: Testing data entry for vibhag level
       |Party Mandal                   |Akola                          |
       |Blood Group                    |B+                             |
     And user click on update button
-    And user delete person after all the operations
-      |Reason For Person Deletion|Left The Party|
 
 
 #Scenario: Testing Qc flow in karyakarta data entry
@@ -179,23 +177,3 @@ Feature: Testing data entry for vibhag level
 #And user qc all the data in qc pop up
 #And user click on qc done button and verify qc status
 #And user verify data in qc edit flow
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

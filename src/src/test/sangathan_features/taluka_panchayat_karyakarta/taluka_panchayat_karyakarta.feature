@@ -1,19 +1,20 @@
-Feature: Testing data entry for vibhag level
+Feature: Testing data entry for talukapanchayat karyakarta level
   Background:
     Given user logged in into the saral application
       |Email|state.adminup@gmail.com|
       |Password|Abc@1234|
       |Otp|010203|
-  Scenario: Testing vibhag add data and edit entry functionality
+  Scenario: Testing talukapanchayat add data and edit entry functionality
     Then user click on sangathan data management card on dashboard
-    And user click on add entry button for vibhag
-    And user select vibhag karyakarta data filter
+    And user click on add entry button for talukapanchayat karyakarta
+    And user select talukapanchayat karyakarta data filter
       |Input Fields           |Input Data         |
       |state                  |Uttar Pradesh      |
-      |vibhag                 |Uttar Pradesh North|
+      |administrativeDistrcit |Agra               |
+      |block                  |Aelia              |
       |Organisation Unit      |Core Sangathan     |
       |Organisation Sub Unit  |Office Bearer      |
-    And user click on search button and verify vibhag filter text
+    And user click on search button and verify talukapanchayat Karyakarta filter text
     And user clicks on enter more details
     Then user input below details in data entry form with input fields validation
       |Input Fields                   |Input Data                    |
@@ -179,23 +180,3 @@ Feature: Testing data entry for vibhag level
 #And user qc all the data in qc pop up
 #And user click on qc done button and verify qc status
 #And user verify data in qc edit flow
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

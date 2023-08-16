@@ -14,8 +14,8 @@ import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
-import resources.SangathanPageObjects;
-import resources.WardPageObjects;
+import utils.SangathanPageObjects;
+import utils.WardPageObjects;
 import utils.KaryakaryaDataEntryFormControl;
 import utils.SangathanVariableDeclaration;
 
@@ -795,7 +795,7 @@ public class WardKaryakarta {
 
         // click on Add button
         FormControlKaryakarta.clickOnAddEntryButton();
-        load_wait.waitForPageLoad();
+       load_wait.waitForPageLoad();
 
     }
 
@@ -918,16 +918,12 @@ public class WardKaryakarta {
         Assert.assertEquals(SangathanVariableDeclaration.getCopiedFatherName().toUpperCase(), SangathanVariableDeclaration.getFatherNameVariable().toUpperCase());
 
         // Designation
-        WebElement SelectDesignationEle = driver.findElement(By.xpath("//div[contains(text(),'Select Designation')]"));
-        copiedSelectedDesignation = driver.findElement(with(By.className("ng-value-label")).below(SelectDesignationEle))
-                .getText();
-        Assert.assertEquals(copiedSelectedDesignation, SangathanVariableDeclaration.getDesignationVariable());
+        SangathanVariableDeclaration.setCopiedDesignation(FormControlKaryakarta.getSelectedDesignation());
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedDesignation(), SangathanVariableDeclaration.getDesignationVariable());
 
         // Has SmartPhone
-        WebElement hasSmartPhoneEle = driver.findElement(By.xpath("//div[contains(text(),'Has Smartphone')]"));
-        copiedHasSmartPhone = driver.findElement(with(By.className("ng-value-label")).below(hasSmartPhoneEle))
-                .getText();
-        Assert.assertEquals(copiedHasSmartPhone, SangathanVariableDeclaration.getHasSmartPhoneVariable());
+        SangathanVariableDeclaration.setCopiedHasSmartPhone(FormControlKaryakarta.getSelectedHasSmartPhone());
+        Assert.assertEquals(SangathanVariableDeclaration.getCopiedHasSmartPhone(), SangathanVariableDeclaration.getHasSmartPhoneVariable());
 
         // set copied Phone Number
         SangathanVariableDeclaration.setCopiedPhoneNumber(FormControlKaryakarta.getEnteredPhoneNumber());
@@ -982,6 +978,7 @@ public class WardKaryakarta {
         js.executeScript("arguments[0].scrollIntoView(true);", SelectCategoryEle);
         copiedSelectedCategory = driver.findElement(with(By.className("ng-value-label")).below(SelectCategoryEle))
                 .getText();
+
         Assert.assertEquals(copiedSelectedCategory, SangathanVariableDeclaration.getCategoryVariable());
 
         // Caste
@@ -3066,6 +3063,7 @@ public class WardKaryakarta {
                         js.executeScript("arguments[0].click();", actionButtonEle);
 
                         List<WebElement> actionAllEle = driver.findElements(By.xpath("//button//img"));
+                       // js.executeScript("arguments[0].scrollIntoView(true);", actionAllEle);
                         wait.until(ExpectedConditions.visibilityOfAllElements(actionAllEle));
                         WebElement editButtonEle = driver.findElement(By.xpath("//button//span[text()='Edit']"));
                         WaitUtils.waitForElementToBeClickable(driver, editButtonEle);
