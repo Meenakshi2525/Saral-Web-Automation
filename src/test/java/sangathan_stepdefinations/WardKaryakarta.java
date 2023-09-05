@@ -143,7 +143,7 @@ public class WardKaryakarta {
         System.out.println("URL for ward");
         Map<String, String> map = login_table_ward.asMap(String.class, String.class);
 
-        // -----contructor for setting login values-----------
+        // -----constructor for setting login values-----------
 
         KaryakaryaDataEntryFormControl login_values = new KaryakaryaDataEntryFormControl(map.get("Email"),
                 map.get("Password"), map.get("Otp"));
@@ -613,6 +613,7 @@ public class WardKaryakarta {
         // Blood Group
         FormControlKaryakarta.enterBloodGroup(SangathanVariableDeclaration.getBloodGroupVariable());
 
+        // Validation for phone no.
         // Validation for phone no.
         apply_validation_in_phone_number();
         // phone number
@@ -2886,7 +2887,7 @@ public class WardKaryakarta {
         PhoneNumberEle.sendKeys("2222433434");
         PrimaryMemberIdEle.click();
 
-        errorTextElement = driver.findElement(with(By.className("mat-error")).below(PhoneNumberEle));
+         errorTextElement = driver.findElement(with(By.className("mat-error")).below(PhoneNumberEle));
         wait2.until(ExpectedConditions.textToBePresentInElement(errorTextElement, "Please enter a valid input"));
         System.out.println("errorTextElement text2:" + errorTextElement.getText());
         // PhoneNumberEle.sendKeys(phoneNumberValue);
@@ -2936,7 +2937,7 @@ public class WardKaryakarta {
     }
 
     // @And("^apply validation in email$")
-    public void apply_validation_in_email() throws InterruptedException {
+    public void  apply_validation_in_email() throws InterruptedException {
         // Full Address
         WebElement fullAddressEle = sangathanPageObjects.getFullAddressEle();
         // Email
@@ -3034,7 +3035,7 @@ public class WardKaryakarta {
         calendar.set(Calendar.MONTH, 4);
         // below code for getting date in proper format
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        String setDOB = dateFormat.format(calendar.getTime());
+        String  setDOB = dateFormat.format(calendar.getTime());
         System.out.println(setDOB);
         return setDOB;
 

@@ -9,7 +9,7 @@ import org.openqa.selenium.safari.SafariDriver;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class DriverFactory {
-
+    public WebDriver driver;
     //singleton design pattern - only one instance exits ever , provide global access to that instance by creating getInstance method
 
     public DriverFactory(){
@@ -30,10 +30,14 @@ public class DriverFactory {
 
         if (browserName.equals("chrome")) {
             ChromeOptions co = new ChromeOptions();
+            co.addArguments("incognito");
             co.addArguments("--remote-allow-origins=*");
-            WebDriverManager.chromedriver().setup();
 
-            tlDriver.set(new ChromeDriver(co));
+
+            driver = new ChromeDriver(co);
+//			WebDriverManager.chromedriver().setup();
+
+            tlDriver.set(driver);;
 
         } else if (browserName.equals("firefox")) {
 
