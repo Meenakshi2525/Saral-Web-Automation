@@ -31,7 +31,7 @@ public class ElementUtils {
     }
 
     public void typeTextIntoElement(WebElement element, String textToBeTyped, long durationInSeconds) {
-        driver = DriverFactory.getInstance().getDriver();
+       driver = DriverFactory.getInstance().getDriver();
         WebElement webElement = waitForElement(element, durationInSeconds);
 
         webElement.click();

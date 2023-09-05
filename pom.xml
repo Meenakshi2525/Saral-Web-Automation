@@ -14,7 +14,7 @@
         <junit.version>4.13.2</junit.version>
         <cucumber.version>7.11.0</cucumber.version>
         <maven.compiler.version>3.8.0</maven.compiler.version>
-        <maven.surefire.version>3.0.0-M5</maven.surefire.version>
+        <maven.surefire.version>3.0.0-M9</maven.surefire.version>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
     </properties>
@@ -97,14 +97,13 @@
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-java</artifactId>
-            <version>4.5.3</version>
+            <version>4.11.0</version>
         </dependency>
         <!-- https://mvnrepository.com/artifact/org.testng/testng -->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>7.8.0</version>
-            <scope>test</scope>
+            <version>7.7.1</version>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
@@ -167,10 +166,32 @@
                         <target>${maven.compiler.target}</target>
                     </configuration>
                 </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.22.2</version>
+                    <dependencies>
+                        <dependency>
+                            <!-- (2) -->
+                            <groupId>org.apache.maven.surefire</groupId>
+                            <artifactId>surefire-junit-platform</artifactId>
+                            <version>2.22.2</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven.surefire.version}</version>
+                    <configuration>
+                        <includes>
+                            <include>**/parallelRunner.java</include>
+                        </includes>
+                        <parallel>methods</parallel>
+                        <threadCount>4</threadCount>
+                        <useUnlimitedThreads>true</useUnlimitedThreads>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
